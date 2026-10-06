@@ -29,6 +29,7 @@ export default async function AdminPage() {
   const [
     { count: homeworkCount },
     { count: studentsCount },
+    { count: tomorrowHomeworkCount },
   ] = await Promise.all([
     supabase
       .from('homework')
@@ -39,6 +40,13 @@ export default async function AdminPage() {
 
     supabase
       .from('students')
+      .select('*', {
+        count: 'exact',
+        head: true,
+      }),
+
+    supabase
+      .from('tomorrow_homework')
       .select('*', {
         count: 'exact',
         head: true,
@@ -90,6 +98,19 @@ export default async function AdminPage() {
               <strong>{studentsCount ?? 0}</strong>
             </div>
           </article>
+
+          <article className="admin-stat-card">
+            <div className="admin-stat-icon">
+              ◷
+            </div>
+
+            <div>
+              <span>تکالیف فردا</span>
+              <strong>
+                {tomorrowHomeworkCount ?? 0}
+              </strong>
+            </div>
+          </article>
         </section>
 
         <section className="admin-section">
@@ -117,8 +138,32 @@ export default async function AdminPage() {
 
               <div>
                 <h3>مدیریت تکالیف</h3>
+
                 <p>
                   افزودن، ویرایش و حذف تکالیف کلاس
+                </p>
+              </div>
+            </Link>
+
+            <Link
+              href="/admin/tomorrow-homework"
+              className="admin-action-card"
+            >
+              <div className="admin-action-top">
+                <div className="admin-action-icon">
+                  ◷
+                </div>
+
+                <span className="admin-action-arrow">
+                  ←
+                </span>
+              </div>
+
+              <div>
+                <h3>تکالیف فردا</h3>
+
+                <p>
+                  انتخاب تکالیفی که باید برای فردا نمایش داده شوند
                 </p>
               </div>
             </Link>
@@ -139,6 +184,7 @@ export default async function AdminPage() {
 
               <div>
                 <h3>دانش‌آموزان</h3>
+
                 <p>
                   مشاهده فهرست افراد ثبت‌نام‌شده
                 </p>

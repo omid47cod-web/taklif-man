@@ -44,25 +44,47 @@ export default function HomePage() {
           </p>
         </section>
 
-        <button
-          type="button"
-          className="homework-button"
-          onClick={() => router.push('/homework')}
-        >
-          <span className="homework-button-content">
-            <span className="homework-button-label">
-              تکالیف جاری
+        <div className="home-buttons">
+          <button
+            type="button"
+            className="homework-button"
+            onClick={() => router.push('/homework')}
+          >
+            <span className="homework-button-content">
+              <span className="homework-button-label">
+                تکالیف جاری
+              </span>
+
+              <span className="homework-button-hint">
+                مشاهده تکالیف کلاس
+              </span>
             </span>
 
-            <span className="homework-button-hint">
-              مشاهده تکالیف کلاس
+            <span className="homework-arrow">
+              ←
             </span>
-          </span>
+          </button>
 
-          <span className="homework-arrow">
-            ←
-          </span>
-        </button>
+          <button
+            type="button"
+            className="homework-button"
+            onClick={() => router.push('/tomorrow-homework')}
+          >
+            <span className="homework-button-content">
+              <span className="homework-button-label">
+                تکالیف فردا
+              </span>
+
+              <span className="homework-button-hint">
+                مشاهده تکالیف فردا
+              </span>
+            </span>
+
+            <span className="homework-arrow">
+              ←
+            </span>
+          </button>
+        </div>
 
         <footer className="creator">
           <div className="creator-line" />

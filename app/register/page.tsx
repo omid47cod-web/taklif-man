@@ -13,7 +13,48 @@ export default function RegisterPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function createStudentSession(mobile: string) {
+    try {
+      const response = await fetch(
+        '/api/student-session',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            phone: mobile,
+          }),
+        }
+      )
+
+      if (!response.ok) {
+        const data = await response
+          .json()
+          .catch(() => null)
+
+        console.error(
+          'CREATE STUDENT SESSION ERROR:',
+          data
+        )
+
+        return false
+      }
+
+      return true
+    } catch (sessionError) {
+      console.error(
+        'CREATE STUDENT SESSION ERROR:',
+        sessionError
+      )
+
+      return false
+    }
+  }
+
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>
+  ) {
     event.preventDefault()
     setError('')
 
@@ -21,43 +62,85 @@ export default function RegisterPage() {
     const mobile = phone.trim()
 
     if (name.length < 3) {
-      setError('لطفاً نام و نام خانوادگی را کامل وارد کنید.')
+      setError(
+        'لطفاً نام و نام خانوادگی را کامل وارد کنید.'
+      )
       return
     }
 
     if (!/^09\d{9}$/.test(mobile)) {
-      setError('شماره تماس باید با 09 شروع شود و دقیقاً 11 رقم باشد.')
+      setError(
+        'شماره تماس باید با 09 شروع شود و دقیقاً 11 رقم باشد.'
+      )
       return
     }
 
     setLoading(true)
 
-     const { error: insertError } = await supabase
-  .from('students')
-  .insert({
-    full_name: name,
-    phone: mobile,
-  })
+    /*
+     * ثبت دانش‌آموز جدید
+     */
+    const { error: insertError } =
+      await supabase
+        .from('students')
+        .insert({
+          full_name: name,
+          phone: mobile,
+        })
 
     if (insertError) {
+      console.error(
+        'REGISTER STUDENT ERROR:',
+        insertError
+      )
+
       if (insertError.code === '23505') {
-        setError('این شماره تماس قبلاً ثبت شده است.')
+        setError(
+          'این شماره تماس قبلاً ثبت شده است.'
+        )
       } else {
-        setError('ثبت اطلاعات انجام نشد. دوباره تلاش کنید.')
+        setError(
+          `ثبت اطلاعات انجام نشد: ${
+            insertError.message ||
+            insertError.code ||
+            'خطای نامشخص'
+          }`
+        )
       }
 
       setLoading(false)
       return
     }
 
+    /*
+     * ذخیره اطلاعات در مرورگر
+     */
     localStorage.setItem(
-  'taklif-man-student',
-  JSON.stringify({
-    full_name: name,
-    phone: mobile,
-  })
-)
+      'taklif-man-student',
+      JSON.stringify({
+        full_name: name,
+        phone: mobile,
+      })
+    )
 
+    /*
+     * ایجاد cookie سمت سرور
+     */
+    const sessionCreated =
+      await createStudentSession(mobile)
+
+    if (!sessionCreated) {
+      setError(
+        'اطلاعات شما ثبت شد، اما ایجاد دسترسی کامل نشد. دوباره تلاش کنید.'
+      )
+
+      setLoading(false)
+      return
+    }
+
+    /*
+     * ورود به برنامه
+     */
     router.replace('/')
   }
 
@@ -144,9 +227,10 @@ export default function RegisterPage() {
                   maxLength={11}
                   value={phone}
                   onChange={(event) => {
-                    const value = event.target.value
-                      .replace(/\D/g, '')
-                      .slice(0, 11)
+                    const value =
+                      event.target.value
+                        .replace(/\D/g, '')
+                        .slice(0, 11)
 
                     setPhone(value)
                   }}
@@ -162,7 +246,10 @@ export default function RegisterPage() {
             </div>
 
             {error && (
-              <div className="register-error" role="alert">
+              <div
+                className="register-error"
+                role="alert"
+              >
                 <span>!</span>
                 <p>{error}</p>
               </div>
