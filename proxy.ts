@@ -104,16 +104,30 @@ export async function proxy(request: NextRequest) {
 
   await supabase.auth.getClaims()
 
-  const pathname = request.nextUrl.pathname
 
-  if (
-    pathname === '/register' ||
-    pathname === '/blocked' ||
-    pathname.startsWith('/admin') ||
-    pathname.startsWith('/api/')
-  ) {
-    return supabaseResponse
-  }
+const pathname = request.nextUrl.pathname
+
+// نسخه دوم برای دانش‌آموزان منقضی شده است.
+if (
+  isStudentRoute(pathname) ||
+  pathname === '/register' ||
+  pathname === '/blocked'
+) {
+  const expiredUrl = request.nextUrl.clone()
+  expiredUrl.pathname = '/expired'
+  expiredUrl.search = ''
+
+  return NextResponse.redirect(expiredUrl)
+}
+
+if (
+  pathname.startsWith('/admin') ||
+  pathname.startsWith('/api/') ||
+  pathname === '/expired'
+) {
+  return supabaseResponse
+}
+
 
   if (!isStudentRoute(pathname)) {
     return supabaseResponse
