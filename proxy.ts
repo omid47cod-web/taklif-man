@@ -1,4 +1,3 @@
-
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
@@ -23,11 +22,7 @@ function isStudentRoute(pathname: string) {
 
 async function hashToken(token: string) {
   const data = new TextEncoder().encode(token)
-
-  const hashBuffer = await crypto.subtle.digest(
-    'SHA-256',
-    data
-  )
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
 
   return Array.from(new Uint8Array(hashBuffer))
     .map((byte) => byte.toString(16).padStart(2, '0'))
@@ -38,7 +33,6 @@ function redirectToRegister(request: NextRequest) {
   const url = request.nextUrl.clone()
   url.pathname = '/register'
   url.search = ''
-
   return NextResponse.redirect(url)
 }
 
@@ -46,7 +40,6 @@ function redirectToBlocked(request: NextRequest) {
   const url = request.nextUrl.clone()
   url.pathname = '/blocked'
   url.search = ''
-
   return NextResponse.redirect(url)
 }
 
@@ -63,6 +56,23 @@ function clearStudentSession(response: NextResponse) {
 }
 
 export async function proxy(request: NextRequest) {
+  const pathname = request.nextUrl.pathname
+  const isAdminRoute = pathname.startsWith('/admin')
+  const studentRoute = isStudentRoute(pathname)
+
+  // مسیرهای عمومی و API به بررسی نشست در Proxy نیاز ندارند.
+  if (!isAdminRoute && !studentRoute) {
+    return NextResponse.next({ request })
+  }
+
+  const token = studentRoute
+    ? request.cookies.get(SESSION_COOKIE)?.value
+    : undefined
+
+  if (studentRoute && !token) {
+    return redirectToRegister(request)
+  }
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -73,7 +83,6 @@ export async function proxy(request: NextRequest) {
         getAll() {
           return request.cookies.getAll()
         },
-
         setAll(cookiesToSet, headers) {
           cookiesToSet.forEach(({ name, value }) => {
             request.cookies.set(name, value)
@@ -95,38 +104,18 @@ export async function proxy(request: NextRequest) {
     }
   )
 
-  await supabase.auth.getClaims()
-
-  const pathname = request.nextUrl.pathname
-
-  // مسیرهای عمومی، مدیریت و API
-  if (
-    pathname === '/register' ||
-    pathname === '/blocked' ||
-    pathname.startsWith('/admin') ||
-    pathname.startsWith('/api/')
-  ) {
+  // احراز هویت Supabase فقط برای مسیرهای مدیریت.
+  if (isAdminRoute) {
+    await supabase.auth.getClaims()
     return supabaseResponse
   }
 
-  // مسیرهایی که نیاز به ورود دانش‌آموز دارند
-  if (!isStudentRoute(pathname)) {
-    return supabaseResponse
-  }
-
-  const token = request.cookies.get(SESSION_COOKIE)?.value
-
-  if (!token) {
-    return redirectToRegister(request)
-  }
-
-  const tokenHash = await hashToken(token)
+  // احراز هویت دانش‌آموز با نشست اختصاصی.
+  const tokenHash = await hashToken(token!)
 
   const { data, error } = await supabase.rpc(
     'get_student_by_session',
-    {
-      p_token_hash: tokenHash,
-    }
+    { p_token_hash: tokenHash }
   )
 
   if (error) {
@@ -139,7 +128,6 @@ export async function proxy(request: NextRequest) {
 
     const response = redirectToRegister(request)
     clearStudentSession(response)
-
     return response
   }
 
@@ -148,11 +136,9 @@ export async function proxy(request: NextRequest) {
   if (!student) {
     const response = redirectToRegister(request)
     clearStudentSession(response)
-
     return response
   }
 
-  // دانش‌آموز مسدودشده به صفحه مسدودی هدایت می‌شود
   if (student.is_blocked === true) {
     return redirectToBlocked(request)
   }
