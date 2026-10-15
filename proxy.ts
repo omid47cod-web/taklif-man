@@ -1,3 +1,4 @@
+
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
@@ -5,62 +6,64 @@ const STUDENT_ROUTES = [
   '/',
   '/homework',
   '/tomorrow-homework',
+  '/task-requests',
+  '/group-chat',
+  '/support',
 ]
 
-const STUDENT_COOKIE = 'taklif-man-student-phone'
-const PERSISTENT_COOKIE = 'taklif-man-student-phone-persist'
-
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 365 // 1 year
+const SESSION_COOKIE = 'taklif-man-student-session'
 
 function isStudentRoute(pathname: string) {
   return STUDENT_ROUTES.some(
     (route) =>
       pathname === route ||
-      pathname.startsWith(`${route}/`)
+      (route !== '/' && pathname.startsWith(`${route}/`))
   )
 }
 
-function clearStudentCookies(response: NextResponse) {
-  response.cookies.set({
-    name: STUDENT_COOKIE,
-    value: '',
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 0,
-  })
+async function hashToken(token: string) {
+  const data = new TextEncoder().encode(token)
 
-  response.cookies.set({
-    name: PERSISTENT_COOKIE,
-    value: '',
-    httpOnly: false,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 0,
-  })
+  const hashBuffer = await crypto.subtle.digest(
+    'SHA-256',
+    data
+  )
+
+  return Array.from(new Uint8Array(hashBuffer))
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('')
 }
 
-function setStudentSessionCookie(
-  response: NextResponse,
-  phone: string
-) {
+function redirectToRegister(request: NextRequest) {
+  const url = request.nextUrl.clone()
+  url.pathname = '/register'
+  url.search = ''
+
+  return NextResponse.redirect(url)
+}
+
+function redirectToBlocked(request: NextRequest) {
+  const url = request.nextUrl.clone()
+  url.pathname = '/blocked'
+  url.search = ''
+
+  return NextResponse.redirect(url)
+}
+
+function clearStudentSession(response: NextResponse) {
   response.cookies.set({
-    name: STUDENT_COOKIE,
-    value: phone,
+    name: SESSION_COOKIE,
+    value: '',
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',
-    maxAge: COOKIE_MAX_AGE,
+    maxAge: 0,
   })
 }
 
 export async function proxy(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request,
-  })
+  let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -76,26 +79,16 @@ export async function proxy(request: NextRequest) {
             request.cookies.set(name, value)
           })
 
-          supabaseResponse = NextResponse.next({
-            request,
+          supabaseResponse = NextResponse.next({ request })
+
+          cookiesToSet.forEach(({ name, value, options }) => {
+            supabaseResponse.cookies.set(name, value, options)
           })
 
-          cookiesToSet.forEach(
-            ({ name, value, options }) => {
-              supabaseResponse.cookies.set(
-                name,
-                value,
-                options
-              )
-            }
-          )
-
           if (headers) {
-            Object.entries(headers).forEach(
-              ([key, value]) => {
-                supabaseResponse.headers.set(key, value)
-              }
-            )
+            Object.entries(headers).forEach(([key, value]) => {
+              supabaseResponse.headers.set(key, value)
+            })
           }
         },
       },
@@ -104,143 +97,64 @@ export async function proxy(request: NextRequest) {
 
   await supabase.auth.getClaims()
 
+  const pathname = request.nextUrl.pathname
 
-const pathname = request.nextUrl.pathname
+  // مسیرهای عمومی، مدیریت و API
+  if (
+    pathname === '/register' ||
+    pathname === '/blocked' ||
+    pathname.startsWith('/admin') ||
+    pathname.startsWith('/api/')
+  ) {
+    return supabaseResponse
+  }
 
-// نسخه دوم برای دانش‌آموزان منقضی شده است.
-if (
-  isStudentRoute(pathname) ||
-  pathname === '/register' ||
-  pathname === '/blocked'
-) {
-  const expiredUrl = request.nextUrl.clone()
-  expiredUrl.pathname = '/expired'
-  expiredUrl.search = ''
-
-  return NextResponse.redirect(expiredUrl)
-}
-
-if (
-  pathname.startsWith('/admin') ||
-  pathname.startsWith('/api/') ||
-  pathname === '/expired'
-) {
-  return supabaseResponse
-}
-
-
+  // مسیرهایی که نیاز به ورود دانش‌آموز دارند
   if (!isStudentRoute(pathname)) {
     return supabaseResponse
   }
 
-  /*
-   * ابتدا کوکی HttpOnly اصلی را بررسی می‌کنیم.
-   */
-  let studentPhone = request.cookies.get(
-    STUDENT_COOKIE
-  )?.value
+  const token = request.cookies.get(SESSION_COOKIE)?.value
 
-  /*
-   * اگر کوکی اصلی وجود نداشت، از کوکی ماندگار
-   * استفاده می‌کنیم و بعد از تأیید دانش‌آموز،
-   * کوکی HttpOnly را دوباره می‌سازیم.
-   */
-  let restoredSession = false
-
-  if (!studentPhone) {
-    const persistentPhone = request.cookies.get(
-      PERSISTENT_COOKIE
-    )?.value
-
-    if (persistentPhone) {
-      studentPhone = persistentPhone
-      restoredSession = true
-    }
+  if (!token) {
+    return redirectToRegister(request)
   }
 
-  if (!studentPhone) {
-    const registerUrl = request.nextUrl.clone()
-
-    registerUrl.pathname = '/register'
-    registerUrl.search = ''
-
-    return NextResponse.redirect(registerUrl)
-  }
+  const tokenHash = await hashToken(token)
 
   const { data, error } = await supabase.rpc(
-    'get_student_access',
+    'get_student_by_session',
     {
-      p_phone: studentPhone,
+      p_token_hash: tokenHash,
     }
   )
 
   if (error) {
-    console.error(
-      'Student access check failed:',
-      error
-    )
+    console.error('GET STUDENT BY SESSION ERROR:', {
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+      code: error.code,
+    })
 
-    const registerUrl = request.nextUrl.clone()
-
-    registerUrl.pathname = '/register'
-    registerUrl.search = ''
-
-    return NextResponse.redirect(registerUrl)
-  }
-
-  const access = Array.isArray(data)
-    ? data[0]
-    : data
-
-  /*
-   * اگر شماره دیگر در دیتابیس وجود نداشته باشد،
-   * نشست قبلی را پاک می‌کنیم تا کاربر بتواند
-   * دوباره خودش را معرفی کند.
-   */
-  if (!access?.exists_student) {
-    const registerUrl = request.nextUrl.clone()
-
-    registerUrl.pathname = '/register'
-    registerUrl.search = ''
-
-    const response =
-      NextResponse.redirect(registerUrl)
-
-    clearStudentCookies(response)
+    const response = redirectToRegister(request)
+    clearStudentSession(response)
 
     return response
   }
 
-  /*
-   * کاربر مسدود شده باید همچنان به صفحه مسدودی
-   * هدایت شود.
-   */
-  if (access.is_blocked) {
-    const blockedUrl = request.nextUrl.clone()
+  const student = Array.isArray(data) ? data[0] : data
 
-    blockedUrl.pathname = '/blocked'
-    blockedUrl.search = ''
+  if (!student) {
+    const response = redirectToRegister(request)
+    clearStudentSession(response)
 
-    return NextResponse.redirect(blockedUrl)
+    return response
   }
 
-  /*
-   * اگر نشست از کوکی ماندگار بازیابی شده،
-   * کوکی HttpOnly را دوباره ایجاد می‌کنیم.
-   *
-   * همچنین نشست اصلی را در هر مراجعه تمدید می‌کنیم
-   * تا کاربر دوباره با صفحه معرفی مواجه نشود.
-   */
-  if (restoredSession) {
-    setStudentSessionCookie(
-      supabaseResponse,
-      studentPhone
-    )
-  } else {
-    setStudentSessionCookie(
-      supabaseResponse,
-      studentPhone
-    )
+  // دانش‌آموز مسدودشده به صفحه مسدودی هدایت می‌شود
+  if (student.is_blocked === true) {
+    return redirectToBlocked(request)
   }
 
   return supabaseResponse

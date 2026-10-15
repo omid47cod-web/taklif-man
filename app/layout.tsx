@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Vazirmatn } from 'next/font/google'
 import './globals.css'
 import AppBackHandler from '@/components/AppBackHandler'
@@ -10,9 +10,26 @@ const vazirmatn = Vazirmatn({
 })
 
 export const metadata: Metadata = {
-  title: 'تکلیف من',
-  description: 'دسترسی سریع به تکالیف کلاس',
+  title: {
+    default: 'تکلیف من',
+    template: '%s | تکلیف من',
+  },
+  description:
+    'دسترسی سریع به تکالیف، درخواست تکالیف و ارتباط با مدیریت کلاس',
+  applicationName: 'تکلیف من',
   manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    title: 'تکلیف من',
+    statusBarStyle: 'default',
+  },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#5b4050',
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({
