@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
@@ -26,7 +27,7 @@ function Icon({
     viewBox: '0 0 24 24',
     fill: 'none',
     stroke: 'currentColor',
-    strokeWidth: 1.7,
+    strokeWidth: 1.8,
     strokeLinecap: 'round' as const,
     strokeLinejoin: 'round' as const,
     'aria-hidden': true as const,
@@ -35,6 +36,7 @@ function Icon({
   switch (name) {
     case 'back':
       return <svg {...common}><path d="m15 18-6-6 6-6" /></svg>
+
     case 'book':
       return (
         <svg {...common}>
@@ -42,6 +44,7 @@ function Icon({
           <path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20M8 7h8M8 10h6" />
         </svg>
       )
+
     case 'calendar':
       return (
         <svg {...common}>
@@ -49,14 +52,17 @@ function Icon({
           <path d="M7.5 3.5v4M16.5 3.5v4M3.5 10h17" />
         </svg>
       )
+
     case 'star':
       return (
         <svg {...common}>
           <path d="m12 3 2.75 5.58 6.16.9-4.45 4.34 1.05 6.13L12 17.06l-5.51 2.89 1.05-6.13-4.45-4.34 6.16-.9L12 3Z" />
         </svg>
       )
+
     case 'arrow':
       return <svg {...common}><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+
     case 'refresh':
       return (
         <svg {...common}>
@@ -64,6 +70,7 @@ function Icon({
           <path d="M5.6 9a7 7 0 0 1 11.7-2L20 12M4 12l2.7 5a7 7 0 0 0 11.7-2" />
         </svg>
       )
+
     case 'check':
       return <svg {...common}><path d="m5 12 4 4L19 6" /></svg>
   }
@@ -71,7 +78,6 @@ function Icon({
 
 function formatDate(date: string | null) {
   if (!date?.trim()) return 'بدون تاریخ'
-
   return date.trim()
 }
 
@@ -124,8 +130,8 @@ export default function HomeworkDetailPage() {
   }, [id, router, loadHomework])
 
   return (
-    <main className="page" dir="rtl">
-      <div className="page-glow" aria-hidden="true" />
+    <main className="homework-detail-page" dir="rtl">
+      <div className="page-decoration" aria-hidden="true" />
 
       <div className="container">
         <header className="topbar">
@@ -142,6 +148,7 @@ export default function HomeworkDetailPage() {
             <div className="brand-logo">
               <Icon name="book" size={21} />
             </div>
+
             <div className="brand-text">
               <span className="brand-name">تکلیف من</span>
               <span className="brand-en">TAKLIF MAN</span>
@@ -161,7 +168,10 @@ export default function HomeworkDetailPage() {
 
           <div className="title-row">
             <div>
-              <h1>جزئیات <span>تکلیف</span></h1>
+              <h1>
+                جزئیات <span>تکلیف</span>
+              </h1>
+
               <p>عنوان، مهلت و توضیحات تکلیف</p>
             </div>
 
@@ -190,10 +200,13 @@ export default function HomeworkDetailPage() {
             <div className="state-icon">
               <Icon name="book" size={25} />
             </div>
+
             <h2>تکلیف پیدا نشد</h2>
+
             <p>
               این تکلیف ممکن است حذف شده باشد یا دیگر در دسترس نباشد.
             </p>
+
             <button
               type="button"
               className="primary-button"
@@ -202,6 +215,7 @@ export default function HomeworkDetailPage() {
               <Icon name="back" size={17} />
               بازگشت به فهرست تکالیف
             </button>
+
             <button
               type="button"
               className="retry-button"
@@ -213,15 +227,22 @@ export default function HomeworkDetailPage() {
           </section>
         ) : (
           <>
-            <article className={`detail-panel ${homework.is_red ? 'important-panel' : ''}`}>
+            <article
+              className={`detail-panel ${homework.is_red ? 'important-panel' : ''}`}
+            >
               <div className="panel-heading">
                 <div className="panel-heading-icon">
-                  <Icon name={homework.is_red ? 'star' : 'book'} size={20} />
+                  <Icon
+                    name={homework.is_red ? 'star' : 'book'}
+                    size={20}
+                  />
                 </div>
+
                 <div className="panel-heading-copy">
                   <span>اطلاعات تکلیف</span>
                   <small>ASSIGNMENT DETAILS</small>
                 </div>
+
                 <span className="panel-status">
                   <span />
                   ثبت‌شده
@@ -237,6 +258,7 @@ export default function HomeworkDetailPage() {
                 <div className="date-icon">
                   <Icon name="calendar" size={20} />
                 </div>
+
                 <div className="date-content">
                   <span>مهلت انجام تکلیف</span>
                   <strong>{formatDate(homework.due_date)}</strong>
@@ -254,6 +276,7 @@ export default function HomeworkDetailPage() {
                   <div className="content-heading-icon">
                     <Icon name="book" size={17} />
                   </div>
+
                   <h3>توضیحات تکلیف</h3>
                 </div>
 
@@ -282,51 +305,48 @@ export default function HomeworkDetailPage() {
 
         <footer className="footer">
           <div className="footer-rule" />
+
           <div className="footer-brand">
             <span>✦</span>
             تکلیف من
           </div>
+
           <p>همه تکالیف کلاس، ساده و همیشه در دسترس.</p>
         </footer>
       </div>
 
       <style jsx>{`
-        :global(*) {
-          box-sizing: border-box;
-        }
+        .homework-detail-page {
+          --navy: #173b50;
+          --teal: #0d9488;
+          --teal-light: #e5f5f2;
+          --background: #f3f7f8;
+          --surface: #ffffff;
+          --text: #193748;
+          --muted: #71818a;
+          --border: #e5edef;
 
-        :global(html) {
-          background: #090909;
-        }
-
-        :global(body) {
-          margin: 0;
-          background: #090909;
-          color: #f5f2ec;
-          font-family: var(--font-vazirmatn), Tahoma, sans-serif;
-        }
-
-        .page {
           position: relative;
           isolation: isolate;
           min-height: 100vh;
           overflow: hidden;
-          padding: 20px 18px 25px;
-          background: #090909;
-          color: #f5f2ec;
+          padding: 22px 18px 28px;
+          background: var(--background);
+          color: var(--text);
+          font-family: var(--font-vazirmatn), Tahoma, sans-serif;
         }
 
-        .page-glow {
+        .page-decoration {
           position: absolute;
           z-index: -1;
-          top: -180px;
+          top: -190px;
           right: 50%;
-          width: 480px;
-          height: 350px;
+          width: 490px;
+          height: 360px;
           transform: translateX(50%);
           border-radius: 50%;
-          background: rgba(197, 168, 103, 0.07);
-          filter: blur(100px);
+          background: rgba(13, 148, 136, 0.07);
+          filter: blur(85px);
           pointer-events: none;
         }
 
@@ -340,27 +360,27 @@ export default function HomeworkDetailPage() {
           display: flex;
           align-items: center;
           gap: 12px;
-          min-height: 44px;
+          min-height: 46px;
         }
 
         .back-button {
           display: grid;
           flex-shrink: 0;
           place-items: center;
-          width: 39px;
-          height: 39px;
+          width: 40px;
+          height: 40px;
           padding: 0;
-          color: #d6c49b;
-          background: #14130f;
-          border: 1px solid rgba(197, 168, 103, 0.19);
+          color: var(--navy);
+          background: var(--surface);
+          border: 1px solid var(--border);
           border-radius: 12px;
           cursor: pointer;
           transition: background 0.2s, border-color 0.2s;
         }
 
         .back-button:hover {
-          background: #201d15;
-          border-color: rgba(197, 168, 103, 0.45);
+          background: #eaf5f4;
+          border-color: #b7ded9;
         }
 
         .brand {
@@ -373,11 +393,12 @@ export default function HomeworkDetailPage() {
         .brand-logo {
           display: grid;
           place-items: center;
-          width: 39px;
-          height: 39px;
-          color: #17130b;
-          background: linear-gradient(145deg, #e2cd94, #b99a5a);
+          width: 40px;
+          height: 40px;
+          color: #fff;
+          background: linear-gradient(145deg, #1d5269, #0d9488);
           border-radius: 12px;
+          box-shadow: 0 5px 12px rgba(13, 148, 136, 0.15);
         }
 
         .brand-text {
@@ -387,17 +408,17 @@ export default function HomeworkDetailPage() {
         }
 
         .brand-name {
-          color: #f4f0e7;
+          color: var(--navy);
           font-size: 13px;
-          font-weight: 800;
+          font-weight: 900;
         }
 
         .brand-en {
-          color: #9e895e;
+          color: #7c929b;
           font-family: Arial, sans-serif;
           font-size: 8px;
           font-weight: 700;
-          letter-spacing: 1.6px;
+          letter-spacing: 1.5px;
           direction: ltr;
         }
 
@@ -406,34 +427,35 @@ export default function HomeworkDetailPage() {
           place-items: center;
           width: 29px;
           height: 29px;
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          border: 1px solid #dce9eb;
           border-radius: 50%;
         }
 
         .brand-status span {
-          width: 6px;
-          height: 6px;
-          background: #c5a867;
+          width: 7px;
+          height: 7px;
+          background: var(--teal);
           border-radius: 50%;
-          box-shadow: 0 0 9px rgba(197, 168, 103, 0.4);
+          box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.1);
         }
 
         .page-heading {
-          padding: 34px 0 23px;
+          padding: 37px 0 25px;
         }
 
         .eyebrow {
           display: flex;
           align-items: center;
           gap: 8px;
-          color: #b9a575;
+          color: var(--teal);
           font-size: 11px;
+          font-weight: 700;
         }
 
         .eyebrow-line {
           width: 19px;
           height: 2px;
-          background: #c5a867;
+          background: var(--teal);
           border-radius: 2px;
         }
 
@@ -447,7 +469,7 @@ export default function HomeworkDetailPage() {
 
         .title-row h1 {
           margin: 0;
-          color: #f6f3ec;
+          color: var(--navy);
           font-size: clamp(27px, 6vw, 34px);
           font-weight: 900;
           line-height: 1.55;
@@ -455,12 +477,12 @@ export default function HomeworkDetailPage() {
         }
 
         .title-row h1 span {
-          color: #c5a867;
+          color: var(--teal);
         }
 
         .title-row p {
           margin: 3px 0 0;
-          color: #99958c;
+          color: var(--muted);
           font-size: 11px;
           line-height: 1.9;
         }
@@ -471,47 +493,51 @@ export default function HomeworkDetailPage() {
           align-items: center;
           gap: 5px;
           padding: 6px 9px;
-          color: #ddc17c;
-          background: rgba(197, 168, 103, 0.09);
-          border: 1px solid rgba(197, 168, 103, 0.23);
+          color: #a66f1c;
+          background: #fff4dc;
+          border: 1px solid #f0e0ba;
           border-radius: 8px;
           font-size: 10px;
-          font-weight: 700;
+          font-weight: 800;
           white-space: nowrap;
         }
 
         .detail-panel {
-          padding: 17px;
-          background: #10100f;
-          border: 1px solid #25231d;
-          border-radius: 17px;
-          box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+          padding: 19px;
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: 18px;
+          box-shadow: 0 9px 30px rgba(23, 59, 80, 0.05);
           animation: enter 0.3s ease both;
         }
 
         .important-panel {
-          border-color: rgba(197, 168, 103, 0.25);
-          background: linear-gradient(145deg, rgba(197, 168, 103, 0.045), #10100f 48%);
+          border-color: #f0dfb9;
+          background: linear-gradient(145deg, #fffdf8, #fff 55%);
         }
 
         .panel-heading {
           display: flex;
           align-items: center;
           gap: 10px;
-          padding-bottom: 14px;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+          padding-bottom: 15px;
+          border-bottom: 1px solid #edf1f2;
         }
 
         .panel-heading-icon {
           display: grid;
           flex-shrink: 0;
           place-items: center;
-          width: 37px;
-          height: 37px;
-          color: #cbb476;
-          background: rgba(197, 168, 103, 0.09);
-          border: 1px solid rgba(197, 168, 103, 0.14);
-          border-radius: 10px;
+          width: 39px;
+          height: 39px;
+          color: var(--teal);
+          background: var(--teal-light);
+          border-radius: 11px;
+        }
+
+        .important-panel .panel-heading-icon {
+          color: #b17b24;
+          background: #fff3d8;
         }
 
         .panel-heading-copy {
@@ -523,13 +549,13 @@ export default function HomeworkDetailPage() {
         }
 
         .panel-heading-copy > span {
-          color: #eee9df;
+          color: var(--navy);
           font-size: 12px;
-          font-weight: 800;
+          font-weight: 900;
         }
 
         .panel-heading-copy small {
-          color: #9e895e;
+          color: #7c929b;
           font-family: Arial, sans-serif;
           font-size: 8px;
           letter-spacing: 1.2px;
@@ -541,36 +567,40 @@ export default function HomeworkDetailPage() {
           display: inline-flex;
           align-items: center;
           gap: 5px;
-          color: #9b978b;
+          color: #84949a;
           font-size: 9px;
           white-space: nowrap;
         }
 
         .panel-status > span {
-          width: 5px;
-          height: 5px;
-          background: #bba36c;
+          width: 6px;
+          height: 6px;
+          background: var(--teal);
           border-radius: 50%;
         }
 
         .title-section {
-          padding: 19px 1px 0;
+          padding: 21px 1px 0;
         }
 
         .section-label {
           display: block;
           margin-bottom: 7px;
-          color: #b99a5a;
+          color: var(--teal);
           font-size: 10px;
-          font-weight: 700;
+          font-weight: 800;
+        }
+
+        .important-panel .section-label {
+          color: #a77b31;
         }
 
         .title-section h2 {
           margin: 0;
-          color: #f5f2ec;
+          color: var(--navy);
           font-size: clamp(19px, 4.8vw, 24px);
           line-height: 1.9;
-          font-weight: 800;
+          font-weight: 900;
           overflow-wrap: anywhere;
         }
 
@@ -578,23 +608,32 @@ export default function HomeworkDetailPage() {
           display: flex;
           align-items: center;
           gap: 11px;
-          margin-top: 17px;
-          padding: 11px;
-          background: rgba(197, 168, 103, 0.045);
-          border: 1px solid rgba(197, 168, 103, 0.13);
+          margin-top: 18px;
+          padding: 12px;
+          background: #f1f8f7;
+          border: 1px solid #e1efed;
           border-radius: 12px;
+        }
+
+        .important-panel .date-box {
+          background: #fffaf0;
+          border-color: #f2e8d2;
         }
 
         .date-icon {
           display: grid;
           flex-shrink: 0;
           place-items: center;
-          width: 37px;
-          height: 37px;
-          color: #cbb476;
-          background: rgba(197, 168, 103, 0.09);
-          border: 1px solid rgba(197, 168, 103, 0.12);
-          border-radius: 10px;
+          width: 39px;
+          height: 39px;
+          color: var(--teal);
+          background: #e2f2ef;
+          border-radius: 11px;
+        }
+
+        .important-panel .date-icon {
+          color: #b17b24;
+          background: #fff1d1;
         }
 
         .date-content {
@@ -605,14 +644,14 @@ export default function HomeworkDetailPage() {
         }
 
         .date-content span {
-          color: #908a7e;
+          color: #7e9298;
           font-size: 10px;
         }
 
         .date-content strong {
-          color: #ddc17c;
+          color: var(--navy);
           font-size: 12px;
-          font-weight: 700;
+          font-weight: 800;
           overflow-wrap: anywhere;
         }
 
@@ -620,17 +659,17 @@ export default function HomeworkDetailPage() {
           display: flex;
           align-items: center;
           gap: 10px;
-          margin: 20px 0;
+          margin: 21px 0;
         }
 
         .section-divider > span:not(.divider-symbol) {
           flex: 1;
           height: 1px;
-          background: rgba(255, 255, 255, 0.065);
+          background: #e9eff0;
         }
 
         .divider-symbol {
-          color: #8c7748;
+          color: var(--teal);
           font-size: 11px;
         }
 
@@ -649,31 +688,36 @@ export default function HomeworkDetailPage() {
           display: grid;
           flex-shrink: 0;
           place-items: center;
-          width: 29px;
-          height: 29px;
-          color: #bca46c;
-          background: rgba(197, 168, 103, 0.07);
-          border-radius: 8px;
+          width: 30px;
+          height: 30px;
+          color: var(--teal);
+          background: #eaf6f4;
+          border-radius: 9px;
         }
 
         .content-heading h3 {
           margin: 0;
-          color: #eee9df;
+          color: var(--navy);
           font-size: 12px;
-          font-weight: 800;
+          font-weight: 900;
         }
 
         .homework-content {
           margin: 0;
-          padding: 12px 13px;
-          color: #c8c5bd;
-          background: rgba(255, 255, 255, 0.018);
-          border: 1px solid rgba(255, 255, 255, 0.045);
-          border-radius: 10px;
+          padding: 14px;
+          color: #536b75;
+          background: #f8fbfb;
+          border: 1px solid #edf2f2;
+          border-radius: 11px;
           font-size: 12px;
-          line-height: 2.2;
+          line-height: 2.25;
           white-space: pre-wrap;
           overflow-wrap: anywhere;
+        }
+
+        .important-panel .homework-content {
+          background: #fffdf8;
+          border-color: #f1eadb;
         }
 
         .no-content {
@@ -681,14 +725,14 @@ export default function HomeworkDetailPage() {
           align-items: center;
           gap: 9px;
           padding: 13px;
-          color: #898478;
-          background: rgba(255, 255, 255, 0.018);
-          border: 1px dashed rgba(255, 255, 255, 0.09);
+          color: #84949a;
+          background: #f8fbfb;
+          border: 1px dashed #dfe9ea;
           border-radius: 10px;
         }
 
         .no-content-mark {
-          color: #b99a5a;
+          color: var(--teal);
           font-size: 17px;
         }
 
@@ -704,23 +748,23 @@ export default function HomeworkDetailPage() {
           justify-content: center;
           gap: 9px;
           width: 100%;
-          min-height: 43px;
-          margin-top: 10px;
+          min-height: 45px;
+          margin-top: 11px;
           padding: 10px 13px;
-          color: #c7b27f;
-          background: rgba(197, 168, 103, 0.045);
-          border: 1px solid rgba(197, 168, 103, 0.16);
+          color: var(--navy);
+          background: #fff;
+          border: 1px solid #dce9eb;
           border-radius: 11px;
           font-family: inherit;
           font-size: 11px;
-          font-weight: 600;
+          font-weight: 700;
           cursor: pointer;
           transition: background 0.2s, border-color 0.2s;
         }
 
         .bottom-back:hover {
-          background: rgba(197, 168, 103, 0.09);
-          border-color: rgba(197, 168, 103, 0.32);
+          background: #eaf6f4;
+          border-color: #b9ded9;
         }
 
         .bottom-back span {
@@ -729,18 +773,20 @@ export default function HomeworkDetailPage() {
 
         .bottom-back :global(svg:last-child) {
           margin-right: auto;
-          opacity: 0.6;
+          color: var(--teal);
+          opacity: 0.7;
         }
 
         .state-panel {
           display: flex;
           align-items: center;
           flex-direction: column;
-          padding: 30px 18px;
+          padding: 32px 18px;
           text-align: center;
-          background: #10100f;
-          border: 1px solid #25231d;
-          border-radius: 16px;
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: 17px;
+          box-shadow: 0 8px 25px rgba(23, 59, 80, 0.04);
         }
 
         .state-icon {
@@ -749,23 +795,23 @@ export default function HomeworkDetailPage() {
           width: 49px;
           height: 49px;
           margin-bottom: 14px;
-          color: #cbb476;
-          background: rgba(197, 168, 103, 0.09);
-          border: 1px solid rgba(197, 168, 103, 0.17);
+          color: var(--teal);
+          background: var(--teal-light);
+          border: 1px solid #d6eeea;
           border-radius: 14px;
         }
 
         .state-panel h2 {
           margin: 0;
-          color: #f2efe8;
+          color: var(--navy);
           font-size: 15px;
-          font-weight: 800;
+          font-weight: 900;
         }
 
         .state-panel p {
           max-width: 340px;
           margin: 9px 0 0;
-          color: #928d82;
+          color: #829198;
           font-size: 11px;
           line-height: 2;
         }
@@ -778,7 +824,7 @@ export default function HomeworkDetailPage() {
           gap: 7px;
           min-height: 39px;
           margin-top: 17px;
-          padding: 0 13px;
+          padding: 0 14px;
           border-radius: 10px;
           font-family: inherit;
           font-size: 11px;
@@ -786,17 +832,22 @@ export default function HomeworkDetailPage() {
         }
 
         .primary-button {
-          color: #17130b;
-          background: linear-gradient(135deg, #e0ca8f, #b99a5a);
-          border: 0;
+          color: #fff;
+          background: var(--teal);
+          border: 1px solid var(--teal);
           font-weight: 800;
+          transition: background 0.2s;
+        }
+
+        .primary-button:hover {
+          background: #087e74;
         }
 
         .retry-button {
           margin-top: 9px;
-          color: #b9a575;
-          background: transparent;
-          border: 1px solid rgba(197, 168, 103, 0.16);
+          color: var(--navy);
+          background: #f4f8f8;
+          border: 1px solid #e1ebec;
         }
 
         .skeleton-heading,
@@ -804,7 +855,12 @@ export default function HomeworkDetailPage() {
         .skeleton-date,
         .skeleton-label,
         .skeleton-line {
-          background: linear-gradient(100deg, #191815 25%, #28251c 50%, #191815 75%);
+          background: linear-gradient(
+            100deg,
+            #edf2f2 25%,
+            #e2ebeb 50%,
+            #edf2f2 75%
+          );
           background-size: 200% 100%;
           animation: shimmer 1.5s ease-in-out infinite;
           border-radius: 7px;
@@ -830,7 +886,7 @@ export default function HomeworkDetailPage() {
         .skeleton-divider {
           height: 1px;
           margin-bottom: 21px;
-          background: rgba(255, 255, 255, 0.06);
+          background: #e9eff0;
         }
 
         .skeleton-label {
@@ -857,7 +913,7 @@ export default function HomeworkDetailPage() {
           display: flex;
           align-items: center;
           flex-direction: column;
-          margin-top: 30px;
+          margin-top: 32px;
           text-align: center;
         }
 
@@ -865,25 +921,31 @@ export default function HomeworkDetailPage() {
           width: 100%;
           height: 1px;
           margin-bottom: 17px;
-          background: linear-gradient(90deg, transparent, rgba(197, 168, 103, 0.19), transparent);
+          background: linear-gradient(
+            90deg,
+            transparent,
+            #d7e5e6,
+            transparent
+          );
         }
 
         .footer-brand {
           display: flex;
           align-items: center;
           gap: 6px;
-          color: #c5a867;
+          color: var(--navy);
           font-size: 11px;
-          font-weight: 800;
+          font-weight: 900;
         }
 
         .footer-brand span {
+          color: var(--teal);
           font-size: 12px;
         }
 
         .footer p {
           margin: 6px 0 0;
-          color: #77736a;
+          color: #94a1a5;
           font-size: 10px;
           line-height: 1.8;
         }
@@ -899,6 +961,7 @@ export default function HomeworkDetailPage() {
             opacity: 0;
             transform: translateY(5px);
           }
+
           to {
             opacity: 1;
             transform: translateY(0);
@@ -906,7 +969,7 @@ export default function HomeworkDetailPage() {
         }
 
         @media (min-width: 600px) {
-          .page {
+          .homework-detail-page {
             padding-top: 27px;
           }
 
@@ -916,22 +979,22 @@ export default function HomeworkDetailPage() {
           }
 
           .detail-panel {
-            padding: 21px;
+            padding: 22px;
           }
 
           .title-section {
-            padding-top: 22px;
+            padding-top: 23px;
           }
         }
 
         @media (max-width: 420px) {
-          .page {
+          .homework-detail-page {
             padding: 15px 12px 20px;
           }
 
           .page-heading {
             padding-top: 29px;
-            padding-bottom: 20px;
+            padding-bottom: 21px;
           }
 
           .title-row {
@@ -954,8 +1017,8 @@ export default function HomeworkDetailPage() {
           }
 
           .detail-panel {
-            padding: 13px;
-            border-radius: 14px;
+            padding: 14px;
+            border-radius: 15px;
           }
 
           .title-section h2 {
@@ -963,11 +1026,11 @@ export default function HomeworkDetailPage() {
           }
 
           .date-box {
-            padding: 9px;
+            padding: 10px;
           }
 
           .homework-content {
-            padding: 10px;
+            padding: 11px;
             font-size: 11px;
           }
         }

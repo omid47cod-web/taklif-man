@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
@@ -254,8 +255,17 @@ export default function TomorrowHomeworkPage() {
             <small>TAKLIF MAN</small>
           </div>
 
-          <h1>تکالیف جلسه بعد</h1>
-          <p>همه چیزهایی که برای جلسه بعد باید آماده کنی.</p>
+          <div className="heading-row">
+            <div>
+              <span className="eyebrow">برنامه درسی شما</span>
+              <h1>تکالیف جلسه بعد</h1>
+              <p>همه چیزهایی که برای جلسه بعد باید آماده کنی.</p>
+            </div>
+
+            <div className="header-icon">
+              <Icon name="book" size={29} />
+            </div>
+          </div>
         </header>
 
         {!loading && !error && homework.length > 0 && (
@@ -317,6 +327,7 @@ export default function TomorrowHomeworkPage() {
               <Icon name="calendar" size={25} />
             </div>
 
+            <span className="empty-label">فعلاً خبری نیست!</span>
             <h2>هنوز تکلیفی ثبت نشده</h2>
 
             <p>
@@ -335,6 +346,7 @@ export default function TomorrowHomeworkPage() {
           <>
             <div className="section-heading">
               <div>
+                <span className="section-eyebrow">برای جلسه آینده</span>
                 <h2>فهرست تکالیف</h2>
                 <p>برای مشاهده جزئیات، یک تکلیف را انتخاب کن.</p>
               </div>
@@ -361,7 +373,7 @@ export default function TomorrowHomeworkPage() {
                       <span className="card-label">
                         {item.is_red ? (
                           <>
-                            <Icon name="star" size={12} />
+                            <Icon name="star" size={13} />
                             تکلیف مهم
                           </>
                         ) : (
@@ -370,7 +382,9 @@ export default function TomorrowHomeworkPage() {
                       </span>
 
                       {item.is_red && (
-                        <span className="important-dot" aria-label="مهم" />
+                        <span className="important-badge">
+                          مهم
+                        </span>
                       )}
                     </div>
 
@@ -407,25 +421,26 @@ export default function TomorrowHomeworkPage() {
       <style jsx>{`
         .page {
           min-height: 100vh;
-          padding: 22px 18px 34px;
+          padding: 25px 18px 35px;
           background:
             radial-gradient(
-              circle at 50% -10%,
-              rgba(190, 158, 88, 0.12),
-              transparent 34%
+              circle at 85% 0%,
+              rgba(13, 148, 136, 0.08),
+              transparent 30%
             ),
-            #070707;
-          color: #f5f3ee;
+            #f3f7f8;
+          color: #173b50;
+          font-family: inherit;
         }
 
         .container {
           width: 100%;
-          max-width: 650px;
+          max-width: 680px;
           margin: 0 auto;
         }
 
         .header {
-          margin-bottom: 25px;
+          margin-bottom: 26px;
         }
 
         .back-button {
@@ -434,80 +449,113 @@ export default function TomorrowHomeworkPage() {
           justify-content: center;
           width: 42px;
           height: 42px;
-          margin-bottom: 23px;
-          border: 1px solid rgba(255, 255, 255, 0.09);
-          border-radius: 13px;
-          background: rgba(255, 255, 255, 0.035);
-          color: #c5a867;
+          margin-bottom: 22px;
+          border: 1px solid #e1e9ec;
+          border-radius: 14px;
+          background: #ffffff;
+          color: #173b50;
           cursor: pointer;
-          transition: border-color 0.2s, background 0.2s;
+          box-shadow: 0 3px 12px rgba(23, 59, 80, 0.04);
+          transition: 0.2s ease;
         }
 
         .back-button:hover {
-          border-color: rgba(197, 168, 103, 0.4);
-          background: rgba(197, 168, 103, 0.08);
+          border-color: #0d9488;
+          color: #0d9488;
+          transform: translateX(2px);
         }
 
         .brand-line {
           display: flex;
           align-items: center;
           gap: 9px;
-          margin-bottom: 9px;
+          margin-bottom: 15px;
         }
 
         .brand-mark {
-          width: 25px;
-          height: 1px;
-          background: #b99a5a;
+          width: 24px;
+          height: 3px;
+          border-radius: 5px;
+          background: #0d9488;
         }
 
         .brand-line small {
-          color: #b99a5a;
+          color: #66818d;
           font-size: 10px;
+          font-weight: 800;
           letter-spacing: 0.13em;
+        }
+
+        .heading-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+        }
+
+        .heading-row > div:first-child {
+          min-width: 0;
+        }
+
+        .eyebrow {
+          display: inline-block;
+          margin-bottom: 5px;
+          color: #0d9488;
+          font-size: 11px;
+          font-weight: 750;
         }
 
         .header h1 {
           margin: 0;
-          font-size: clamp(26px, 6vw, 34px);
-          line-height: 1.5;
-          font-weight: 800;
-          letter-spacing: -0.035em;
+          color: #173b50;
+          font-size: clamp(25px, 6vw, 34px);
+          line-height: 1.55;
+          font-weight: 850;
+          letter-spacing: -0.04em;
         }
 
         .header p {
-          margin: 6px 0 0;
-          color: #85827c;
+          margin: 5px 0 0;
+          color: #71858e;
           font-size: 13px;
           line-height: 1.9;
+        }
+
+        .header-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 65px;
+          height: 65px;
+          flex-shrink: 0;
+          border: 1px solid #d7eeeb;
+          border-radius: 21px;
+          background: #e7f5f3;
+          color: #0d9488;
         }
 
         .overview {
           display: flex;
           align-items: center;
-          gap: 12px;
-          padding: 14px;
-          margin-bottom: 24px;
-          border: 1px solid rgba(185, 154, 90, 0.17);
-          border-radius: 18px;
-          background: linear-gradient(
-            110deg,
-            rgba(185, 154, 90, 0.075),
-            rgba(255, 255, 255, 0.018)
-          );
+          gap: 13px;
+          padding: 15px;
+          margin-bottom: 25px;
+          border: 1px solid #dcebe9;
+          border-radius: 19px;
+          background: #ffffff;
+          box-shadow: 0 5px 18px rgba(23, 59, 80, 0.035);
         }
 
         .overview-icon {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 43px;
-          height: 43px;
+          width: 45px;
+          height: 45px;
           flex-shrink: 0;
-          border: 1px solid rgba(185, 154, 90, 0.13);
-          border-radius: 13px;
-          background: rgba(185, 154, 90, 0.08);
-          color: #c4a765;
+          border-radius: 14px;
+          background: #e8f5f3;
+          color: #0d9488;
         }
 
         .overview-text {
@@ -519,13 +567,13 @@ export default function TomorrowHomeworkPage() {
         }
 
         .overview-text strong {
-          color: #e9d6a5;
+          color: #173b50;
           font-size: 14px;
-          font-weight: 750;
+          font-weight: 800;
         }
 
         .overview-text span {
-          color: #89847b;
+          color: #71858e;
           font-size: 11px;
           line-height: 1.7;
         }
@@ -534,14 +582,14 @@ export default function TomorrowHomeworkPage() {
           display: flex;
           align-items: center;
           justify-content: center;
-          min-width: 39px;
-          height: 39px;
+          min-width: 41px;
+          height: 41px;
           padding: 0 8px;
-          border-radius: 12px;
-          background: rgba(185, 154, 90, 0.1);
-          color: #c4a765;
-          font-size: 13px;
-          font-weight: 800;
+          border-radius: 13px;
+          background: #edf6f5;
+          color: #0d9488;
+          font-size: 14px;
+          font-weight: 850;
           font-variant-numeric: tabular-nums;
         }
 
@@ -550,29 +598,40 @@ export default function TomorrowHomeworkPage() {
           align-items: center;
           justify-content: space-between;
           gap: 12px;
-          margin: 0 2px 13px;
+          margin: 0 2px 14px;
+        }
+
+        .section-eyebrow {
+          display: block;
+          margin-bottom: 3px;
+          color: #0d9488;
+          font-size: 10px;
+          font-weight: 750;
         }
 
         .section-heading h2 {
           margin: 0;
-          font-size: 16px;
-          font-weight: 750;
+          color: #173b50;
+          font-size: 17px;
+          font-weight: 850;
         }
 
         .section-heading p {
           margin: 5px 0 0;
-          color: #77736c;
+          color: #7b8e96;
           font-size: 11px;
           line-height: 1.8;
         }
 
         .section-count {
           flex-shrink: 0;
-          padding: 6px 9px;
-          border: 1px solid rgba(255, 255, 255, 0.07);
-          border-radius: 9px;
-          color: #a7a198;
+          padding: 7px 10px;
+          border: 1px solid #e1e9ec;
+          border-radius: 10px;
+          background: #ffffff;
+          color: #617b87;
           font-size: 10px;
+          font-weight: 700;
         }
 
         .homework-list {
@@ -586,34 +645,27 @@ export default function TomorrowHomeworkPage() {
           align-items: center;
           gap: 13px;
           width: 100%;
-          min-height: 105px;
+          min-height: 108px;
           padding: 15px;
           overflow: hidden;
-          border: 1px solid rgba(255, 255, 255, 0.075);
+          border: 1px solid #e2eaed;
           border-radius: 19px;
-          background: linear-gradient(
-            145deg,
-            rgba(255, 255, 255, 0.045),
-            rgba(255, 255, 255, 0.018)
-          );
-          color: #f5f3ee;
+          background: #ffffff;
+          color: #173b50;
           text-align: right;
           cursor: pointer;
           font-family: inherit;
+          box-shadow: 0 4px 15px rgba(23, 59, 80, 0.035);
           transition:
             border-color 0.18s ease,
-            background 0.18s ease,
+            box-shadow 0.18s ease,
             transform 0.18s ease;
         }
 
         .homework-card:hover {
-          border-color: rgba(185, 154, 90, 0.34);
-          background: linear-gradient(
-            145deg,
-            rgba(185, 154, 90, 0.07),
-            rgba(255, 255, 255, 0.025)
-          );
-          transform: translateY(-1px);
+          border-color: #a9d9d3;
+          box-shadow: 0 7px 20px rgba(13, 148, 136, 0.09);
+          transform: translateY(-2px);
         }
 
         .homework-card:active {
@@ -621,32 +673,35 @@ export default function TomorrowHomeworkPage() {
         }
 
         .homework-card.important {
-          border-color: rgba(183, 104, 80, 0.27);
-          background: linear-gradient(
-            110deg,
-            rgba(122, 56, 42, 0.105),
-            rgba(255, 255, 255, 0.02)
-          );
+          border-color: #f0d8d1;
+          background: linear-gradient(110deg, #fffaf8, #ffffff 65%);
         }
 
         .homework-card.important:hover {
-          border-color: rgba(205, 123, 92, 0.45);
+          border-color: #e7b8aa;
+          box-shadow: 0 7px 20px rgba(190, 94, 70, 0.07);
         }
 
         .card-index {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 39px;
-          height: 43px;
+          width: 42px;
+          height: 45px;
           flex-shrink: 0;
-          border: 1px solid rgba(185, 154, 90, 0.14);
-          border-radius: 12px;
-          background: rgba(185, 154, 90, 0.055);
-          color: #b99a5a;
+          border: 1px solid #dcefeb;
+          border-radius: 13px;
+          background: #edf7f5;
+          color: #0d9488;
           font-size: 12px;
-          font-weight: 800;
+          font-weight: 850;
           font-variant-numeric: tabular-nums;
+        }
+
+        .important .card-index {
+          border-color: #f2dfd9;
+          background: #fff0eb;
+          color: #bd705c;
         }
 
         .card-main {
@@ -657,36 +712,38 @@ export default function TomorrowHomeworkPage() {
         .card-topline {
           display: flex;
           align-items: center;
-          gap: 7px;
+          gap: 8px;
           margin-bottom: 5px;
         }
 
         .card-label {
           display: inline-flex;
           align-items: center;
-          gap: 4px;
-          color: #a99a78;
+          gap: 5px;
+          color: #0d9488;
           font-size: 10px;
-          font-weight: 600;
+          font-weight: 750;
         }
 
         .important .card-label {
-          color: #d39a83;
+          color: #bd705c;
         }
 
-        .important-dot {
-          width: 5px;
-          height: 5px;
-          border-radius: 50%;
-          background: #c97f69;
+        .important-badge {
+          padding: 3px 7px;
+          border-radius: 6px;
+          background: #fff0eb;
+          color: #b96853;
+          font-size: 9px;
+          font-weight: 800;
         }
 
         .card-main h3 {
           margin: 0;
-          color: #f1eee8;
+          color: #173b50;
           font-size: clamp(14px, 3.8vw, 17px);
           line-height: 1.8;
-          font-weight: 750;
+          font-weight: 800;
           overflow-wrap: anywhere;
         }
 
@@ -695,32 +752,43 @@ export default function TomorrowHomeworkPage() {
           align-items: center;
           gap: 6px;
           margin-top: 8px;
-          color: #827d73;
+          color: #81939a;
           font-size: 10.5px;
           line-height: 1.7;
         }
 
         .card-meta :global(svg) {
           flex-shrink: 0;
-          color: #b99a5a;
+          color: #0d9488;
+        }
+
+        .important .card-meta :global(svg) {
+          color: #bd705c;
         }
 
         .card-arrow {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 32px;
-          height: 32px;
+          width: 34px;
+          height: 34px;
           flex-shrink: 0;
-          border: 1px solid rgba(185, 154, 90, 0.15);
+          border: 1px solid #e0eeeb;
           border-radius: 11px;
-          background: rgba(185, 154, 90, 0.055);
-          color: #c4a765;
-          transition: background 0.18s ease;
+          background: #f2f8f7;
+          color: #0d9488;
+          transition: 0.18s ease;
         }
 
         .homework-card:hover .card-arrow {
-          background: rgba(185, 154, 90, 0.13);
+          border-color: #c4e5df;
+          background: #e6f4f1;
+        }
+
+        .important .card-arrow {
+          border-color: #f2e1dc;
+          background: #fff4f0;
+          color: #bd705c;
         }
 
         .state-card {
@@ -728,49 +796,54 @@ export default function TomorrowHomeworkPage() {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          min-height: 275px;
-          padding: 30px 22px;
-          border: 1px solid rgba(255, 255, 255, 0.07);
+          min-height: 285px;
+          padding: 32px 23px;
+          border: 1px solid #e1e9ec;
           border-radius: 23px;
-          background: linear-gradient(
-            145deg,
-            rgba(255, 255, 255, 0.04),
-            rgba(255, 255, 255, 0.014)
-          );
+          background: #ffffff;
           text-align: center;
+          box-shadow: 0 5px 20px rgba(23, 59, 80, 0.035);
         }
 
         .state-icon {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 60px;
-          height: 60px;
+          width: 62px;
+          height: 62px;
           margin-bottom: 17px;
-          border: 1px solid rgba(185, 154, 90, 0.2);
-          border-radius: 19px;
-          background: rgba(185, 154, 90, 0.07);
-          color: #c4a765;
+          border: 1px solid #d9eeea;
+          border-radius: 20px;
+          background: #eaf6f4;
+          color: #0d9488;
         }
 
         .error-icon {
-          border-color: rgba(205, 110, 95, 0.2);
-          background: rgba(205, 110, 95, 0.07);
-          color: #d18d7c;
+          border-color: #f1dcd6;
+          background: #fff1ed;
+          color: #bd705c;
+        }
+
+        .empty-label {
+          margin-bottom: 5px;
+          color: #0d9488;
+          font-size: 10px;
+          font-weight: 800;
         }
 
         .state-card h2 {
           margin: 0;
+          color: #173b50;
           font-size: 17px;
-          font-weight: 800;
+          font-weight: 850;
         }
 
         .state-card p {
-          max-width: 350px;
+          max-width: 365px;
           margin: 9px 0 0;
-          color: #858078;
+          color: #778b93;
           font-size: 12px;
-          line-height: 2;
+          line-height: 2.1;
         }
 
         .retry-button {
@@ -779,18 +852,21 @@ export default function TomorrowHomeworkPage() {
           justify-content: center;
           gap: 8px;
           margin-top: 20px;
-          padding: 11px 17px;
-          border: 1px solid rgba(185, 154, 90, 0.25);
+          padding: 11px 18px;
+          border: 1px solid #c8e5e0;
           border-radius: 12px;
-          background: rgba(185, 154, 90, 0.08);
-          color: #d4b875;
+          background: #eaf6f4;
+          color: #087f76;
           cursor: pointer;
           font-family: inherit;
           font-size: 12px;
+          font-weight: 750;
+          transition: 0.2s ease;
         }
 
         .retry-button:hover {
-          background: rgba(185, 154, 90, 0.14);
+          border-color: #9dd3ca;
+          background: #dff1ee;
         }
 
         .empty-note {
@@ -798,11 +874,13 @@ export default function TomorrowHomeworkPage() {
           align-items: center;
           gap: 7px;
           margin-top: 20px;
-          padding: 8px 11px;
-          border: 1px solid rgba(185, 154, 90, 0.1);
+          padding: 9px 12px;
+          border: 1px solid #e0eeeb;
           border-radius: 10px;
-          color: #a89a78;
+          background: #f5faf9;
+          color: #398b82;
           font-size: 10px;
+          font-weight: 700;
         }
 
         .bottom-note {
@@ -810,8 +888,8 @@ export default function TomorrowHomeworkPage() {
           align-items: center;
           justify-content: center;
           gap: 11px;
-          margin-top: 25px;
-          color: #777064;
+          margin-top: 26px;
+          color: #82949a;
           font-size: 10px;
           text-align: center;
         }
@@ -819,7 +897,7 @@ export default function TomorrowHomeworkPage() {
         .note-line {
           width: 23px;
           height: 1px;
-          background: rgba(185, 154, 90, 0.24);
+          background: #c8dedb;
         }
 
         .loading-card {
@@ -827,11 +905,11 @@ export default function TomorrowHomeworkPage() {
           flex-direction: column;
           justify-content: center;
           gap: 13px;
-          min-height: 105px;
+          min-height: 108px;
           padding: 17px;
-          border: 1px solid rgba(255, 255, 255, 0.055);
+          border: 1px solid #e3ebed;
           border-radius: 19px;
-          background: rgba(255, 255, 255, 0.025);
+          background: #ffffff;
         }
 
         .skeleton-line {
@@ -839,9 +917,9 @@ export default function TomorrowHomeworkPage() {
           border-radius: 8px;
           background: linear-gradient(
             100deg,
-            rgba(255, 255, 255, 0.035) 20%,
-            rgba(255, 255, 255, 0.09) 45%,
-            rgba(255, 255, 255, 0.035) 70%
+            #edf2f3 20%,
+            #e2ebed 45%,
+            #edf2f3 70%
           );
           background-size: 200% 100%;
           animation: shimmer 1.5s linear infinite;
@@ -865,15 +943,17 @@ export default function TomorrowHomeworkPage() {
           align-items: center;
           justify-content: center;
           gap: 10px;
-          margin-top: 31px;
-          color: #555047;
+          margin-top: 32px;
+          color: #91a1a6;
           font-size: 10px;
+          font-weight: 650;
         }
 
         .footer-mark {
           width: 17px;
-          height: 1px;
-          background: rgba(185, 154, 90, 0.22);
+          height: 2px;
+          border-radius: 5px;
+          background: #c8dedb;
         }
 
         @keyframes shimmer {
@@ -888,35 +968,41 @@ export default function TomorrowHomeworkPage() {
 
         @media (max-width: 480px) {
           .page {
-            padding: 17px 13px 29px;
+            padding: 18px 13px 29px;
           }
 
           .header {
             margin-bottom: 22px;
           }
 
+          .header-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 18px;
+          }
+
           .homework-card {
             gap: 10px;
-            min-height: 96px;
+            min-height: 99px;
             padding: 12px;
             border-radius: 16px;
           }
 
           .card-index {
-            width: 33px;
-            height: 38px;
-            border-radius: 10px;
+            width: 35px;
+            height: 39px;
+            border-radius: 11px;
           }
 
           .card-arrow {
-            width: 29px;
-            height: 29px;
+            width: 30px;
+            height: 30px;
             border-radius: 9px;
           }
 
           .overview {
             padding: 12px;
-            margin-bottom: 21px;
+            margin-bottom: 22px;
           }
 
           .section-heading h2 {

@@ -1,3 +1,4 @@
+
 'use client'
 
 import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
@@ -250,7 +251,6 @@ export default function SupportPage() {
 
         setMessages((messageData as SupportMessage[]) || [])
 
-        // پاسخ‌های مدیریت با بازشدن گفت‌وگو خوانده‌شده محسوب می‌شوند.
         await markManagementMessagesRead(currentConversation.id)
       } catch (cause) {
         if (!cancelled) {
@@ -326,7 +326,6 @@ export default function SupportPage() {
               current.filter((item) => item.id !== oldMessage.id)
             )
           } else {
-            // اگر شناسهٔ ردیف در رویداد حذف ارسال نشد، فهرست را دوباره بخوان.
             setReloadKey((value) => value + 1)
           }
         }
@@ -462,60 +461,62 @@ export default function SupportPage() {
     return (
       <main
         dir="rtl"
-        className="flex min-h-screen items-center justify-center bg-[#050505] text-white"
+        className="flex min-h-screen items-center justify-center bg-[#f3f7f8] text-[#173b50]"
       >
-        <div className="flex items-center gap-3 rounded-2xl border border-[#c9a96a]/15 bg-white/[0.03] px-5 py-4">
-          <span className="h-2 w-2 animate-pulse rounded-full bg-[#c9a96a]" />
-          <p className="text-sm text-white/60">در حال آماده‌سازی...</p>
+        <div className="flex items-center gap-3 rounded-2xl border border-[#e2ebed] bg-white px-5 py-4 shadow-sm">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-[#0d9488]" />
+          <p className="text-sm text-[#71838b]">در حال آماده‌سازی...</p>
         </div>
       </main>
     )
   }
 
   return (
-    <main dir="rtl" className="min-h-screen bg-[#050505] text-white">
-      <div className="mx-auto flex min-h-[100dvh] w-full max-w-2xl flex-col">
-        <header className="sticky top-0 z-20 border-b border-white/[0.07] bg-[#050505]/90 px-4 py-4 backdrop-blur-xl sm:px-6">
+    <main dir="rtl" className="min-h-screen bg-[#f3f7f8] text-[#173b50]">
+      <div className="mx-auto flex min-h-[100dvh] w-full max-w-2xl flex-col border-x border-[#e5edef] bg-white/40">
+        <header className="sticky top-0 z-20 border-b border-[#e5edef] bg-white/90 px-4 py-4 backdrop-blur-xl sm:px-6">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => router.back()}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] text-white/75 transition hover:border-[#c9a96a]/35 hover:text-[#c9a96a]"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#e2ebed] bg-white text-[#526b75] transition hover:border-[#0d9488]/30 hover:bg-[#f1faf8] hover:text-[#0d9488]"
               aria-label="بازگشت"
             >
               <SupportIcon name="back" />
             </button>
 
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#c9a96a]/25 bg-[#c9a96a]/10 text-[#c9a96a]">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#cce7e2] bg-[#eaf7f5] text-[#0d9488]">
               <SupportIcon name="user" size={23} />
             </div>
 
             <div className="min-w-0 flex-1">
-              <h1 className="truncate text-base font-bold sm:text-lg">
+              <h1 className="truncate text-base font-extrabold text-[#173b50] sm:text-lg">
                 ارتباط با مدیریت
               </h1>
-              <p className="mt-1 text-xs text-white/40">
+              <p className="mt-1 text-xs text-[#84969c]">
                 گفت‌وگوی خصوصی و پشتیبانی
               </p>
             </div>
 
-            <div className="flex items-center gap-1.5 rounded-full border border-[#c9a96a]/15 bg-[#c9a96a]/[0.06] px-2.5 py-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#c9a96a]" />
-              <span className="text-[10px] text-[#c9a96a]">پشتیبانی</span>
+            <div className="flex items-center gap-1.5 rounded-full border border-[#cce7e2] bg-[#eff9f7] px-2.5 py-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#0d9488]" />
+              <span className="text-[10px] font-medium text-[#0d9488]">
+                پشتیبانی
+              </span>
             </div>
           </div>
         </header>
 
         <section className="flex-1 px-4 py-5 sm:px-6">
-          <div className="mb-5 flex items-start gap-3 rounded-2xl border border-[#c9a96a]/15 bg-gradient-to-l from-[#c9a96a]/[0.08] to-transparent p-4">
-            <div className="mt-0.5 shrink-0 text-[#c9a96a]">
+          <div className="mb-5 flex items-start gap-3 rounded-2xl border border-[#dcece9] bg-gradient-to-l from-[#eaf7f5] to-white p-4">
+            <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#cce7e2] bg-white text-[#0d9488]">
               <SupportIcon name="shield" size={20} />
             </div>
-            <div>
-              <p className="text-sm font-semibold text-white/90">
+            <div className="min-w-0">
+              <p className="text-sm font-extrabold text-[#173b50]">
                 سلام {student.fullName}
               </p>
-              <p className="mt-1 text-xs leading-6 text-white/45">
+              <p className="mt-1 text-xs leading-6 text-[#71838b]">
                 اگر درباره تکالیف یا استفاده از برنامه سؤالی داری، پیام خودت را
                 اینجا بنویس.
               </p>
@@ -524,25 +525,27 @@ export default function SupportPage() {
 
           {loading ? (
             <div className="flex min-h-[38vh] flex-col items-center justify-center gap-4">
-              <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/10 border-t-[#c9a96a]" />
-              <p className="text-sm text-white/40">
+              <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#0d9488]/15 border-t-[#0d9488]" />
+              <p className="text-sm text-[#84969c]">
                 در حال آماده‌سازی گفت‌وگو...
               </p>
             </div>
           ) : error && !conversationId ? (
             <div className="flex min-h-[35vh] flex-col items-center justify-center text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-3xl border border-red-400/15 bg-red-400/[0.06] text-red-300">
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-3xl border border-red-100 bg-red-50 text-red-500">
                 <SupportIcon name="message" size={27} />
               </div>
-              <h2 className="text-base font-bold">اتصال برقرار نشد</h2>
-              <p className="mt-2 max-w-sm text-sm leading-7 text-white/45">
+              <h2 className="text-base font-extrabold text-[#173b50]">
+                اتصال برقرار نشد
+              </h2>
+              <p className="mt-2 max-w-sm text-sm leading-7 text-[#71838b]">
                 دریافت گفت‌وگو با مشکل روبه‌رو شد. اتصال اینترنت را بررسی کن و
                 دوباره تلاش کن.
               </p>
               <button
                 type="button"
                 onClick={() => setReloadKey((value) => value + 1)}
-                className="mt-5 inline-flex items-center gap-2 rounded-xl border border-[#c9a96a]/25 bg-[#c9a96a]/10 px-4 py-2.5 text-sm text-[#c9a96a] transition hover:bg-[#c9a96a]/15"
+                className="mt-5 inline-flex items-center gap-2 rounded-xl border border-[#cce7e2] bg-[#eff9f7] px-4 py-2.5 text-sm font-semibold text-[#0d9488] transition hover:bg-[#e1f3f0]"
               >
                 <SupportIcon name="refresh" size={17} />
                 تلاش دوباره
@@ -550,19 +553,19 @@ export default function SupportPage() {
             </div>
           ) : messages.length === 0 ? (
             <div className="flex min-h-[35vh] items-center justify-center">
-              <div className="w-full rounded-3xl border border-white/[0.08] bg-gradient-to-b from-white/[0.035] to-transparent px-6 py-9 text-center">
-                <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-3xl border border-[#c9a96a]/20 bg-[#c9a96a]/[0.08] text-[#c9a96a]">
+              <div className="w-full rounded-3xl border border-[#e5edef] bg-white px-6 py-9 text-center shadow-[0_10px_35px_rgba(23,59,80,0.045)]">
+                <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-3xl border border-[#cce7e2] bg-[#eff9f7] text-[#0d9488]">
                   <SupportIcon name="message" size={28} />
                 </div>
-                <h2 className="text-lg font-bold">
+                <h2 className="text-lg font-extrabold text-[#173b50]">
                   گفت‌وگوی شما آماده است
                 </h2>
-                <p className="mx-auto mt-2 max-w-xs text-sm leading-7 text-white/45">
+                <p className="mx-auto mt-2 max-w-xs text-sm leading-7 text-[#84969c]">
                   هنوز پیامی ارسال نشده است. اولین پیام خودت را بنویس تا
                   گفت‌وگو با مدیریت شروع شود.
                 </p>
-                <div className="mx-auto mt-6 h-px w-16 bg-gradient-to-l from-transparent via-[#c9a96a]/50 to-transparent" />
-                <p className="mt-4 text-xs text-white/30">
+                <div className="mx-auto mt-6 h-px w-16 bg-gradient-to-l from-transparent via-[#0d9488]/40 to-transparent" />
+                <p className="mt-4 text-xs text-[#91a0a5]">
                   پاسخ مدیریت در همین صفحه نمایش داده می‌شود.
                 </p>
               </div>
@@ -570,7 +573,7 @@ export default function SupportPage() {
           ) : (
             <div className="space-y-4">
               <div className="pb-1 text-center">
-                <span className="rounded-full border border-white/[0.07] bg-white/[0.025] px-3 py-1.5 text-[10px] text-white/35">
+                <span className="rounded-full border border-[#e5edef] bg-white px-3 py-1.5 text-[10px] text-[#91a0a5]">
                   پیام‌های گفت‌وگو
                 </span>
               </div>
@@ -584,14 +587,14 @@ export default function SupportPage() {
                     className={`flex ${isStudentMessage ? 'justify-start' : 'justify-end'}`}
                   >
                     <div
-                      className={`max-w-[88%] rounded-3xl px-4 py-3 sm:max-w-[80%] ${
+                      className={`max-w-[88%] rounded-3xl px-4 py-3 shadow-[0_3px_12px_rgba(23,59,80,0.035)] sm:max-w-[80%] ${
                         isStudentMessage
-                          ? 'rounded-br-md border border-[#c9a96a]/20 bg-gradient-to-br from-[#d9bb7c] to-[#b99552] text-[#17130c]'
-                          : 'rounded-bl-md border border-white/[0.09] bg-[#151515] text-white'
+                          ? 'rounded-br-md border border-[#cce7e2] bg-[#eaf7f5] text-[#173b50]'
+                          : 'rounded-bl-md border border-[#e5edef] bg-white text-[#173b50]'
                       }`}
                     >
                       {!isStudentMessage && (
-                        <p className="mb-1.5 text-[10px] font-semibold text-[#c9a96a]">
+                        <p className="mb-1.5 text-[10px] font-bold text-[#0d9488]">
                           مدیریت
                         </p>
                       )}
@@ -602,7 +605,7 @@ export default function SupportPage() {
 
                       <div
                         className={`mt-2 flex items-center justify-end gap-3 text-[10px] ${
-                          isStudentMessage ? 'text-black/50' : 'text-white/35'
+                          isStudentMessage ? 'text-[#849b9b]' : 'text-[#91a0a5]'
                         }`}
                       >
                         <span>{formatTime(message.created_at)}</span>
@@ -614,10 +617,10 @@ export default function SupportPage() {
                             disabled={deletingId !== null}
                             aria-label="حذف پیام"
                             title="حذف پیام"
-                            className="inline-flex items-center gap-1 rounded-lg px-1.5 py-1 text-black/60 transition hover:bg-black/10 hover:text-red-800 disabled:opacity-40"
+                            className="inline-flex items-center gap-1 rounded-lg px-1.5 py-1 text-red-500/80 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-40"
                           >
                             {deletingId === message.id ? (
-                              <span className="h-3 w-3 animate-spin rounded-full border border-black/20 border-t-black" />
+                              <span className="h-3 w-3 animate-spin rounded-full border border-red-300 border-t-red-600" />
                             ) : (
                               <SupportIcon name="trash" size={13} />
                             )}
@@ -633,20 +636,20 @@ export default function SupportPage() {
           )}
 
           {error && conversationId && !loading && (
-            <div className="mt-4 flex items-start gap-2 rounded-2xl border border-red-400/15 bg-red-400/[0.06] px-4 py-3 text-xs leading-6 text-red-300">
-              <span className="shrink-0">!</span>
+            <div className="mt-4 flex items-start gap-2 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-xs leading-6 text-red-700">
+              <span className="shrink-0 font-bold">!</span>
               <p>{error}</p>
             </div>
           )}
         </section>
 
-        <footer className="sticky bottom-0 border-t border-white/[0.08] bg-[#050505]/95 px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-4 backdrop-blur-xl sm:px-6">
+        <footer className="sticky bottom-0 border-t border-[#e5edef] bg-white/95 px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-4 backdrop-blur-xl sm:px-6">
           <form onSubmit={sendMessage}>
             <div
-              className={`flex items-end gap-2 rounded-2xl border bg-[#111111] p-2 transition ${
+              className={`flex items-end gap-2 rounded-2xl border bg-[#f8fafb] p-2 transition ${
                 sending
-                  ? 'border-white/[0.06]'
-                  : 'border-white/[0.09] focus-within:border-[#c9a96a]/40'
+                  ? 'border-[#e5edef]'
+                  : 'border-[#dfe9eb] focus-within:border-[#0d9488]/50 focus-within:bg-white focus-within:shadow-[0_0_0_3px_rgba(13,148,136,0.07)]'
               }`}
             >
               <textarea
@@ -657,17 +660,7 @@ export default function SupportPage() {
                 maxLength={2000}
                 disabled={sending || loading || !conversationId}
                 aria-label="متن پیام"
-                className="max-h-36 min-h-11 flex-1 resize-y bg-transparent px-3 py-3 text-sm leading-6 text-white outline-none placeholder:text-white/30 disabled:opacity-50"
-                onKeyDown={(event) => {
-                  if (
-                    event.key === 'Enter' &&
-                    !event.shiftKey &&
-                    !event.nativeEvent.isComposing
-                  ) {
-                    event.preventDefault()
-                    event.currentTarget.form?.requestSubmit()
-                  }
-                }}
+                className="max-h-36 min-h-11 min-w-0 flex-1 resize-y bg-transparent px-3 py-3 text-sm leading-6 text-[#173b50] outline-none placeholder:text-[#9aabad] disabled:opacity-50"
               />
 
               <button
@@ -679,11 +672,11 @@ export default function SupportPage() {
                   !text.trim() ||
                   text.trim().length > 2000
                 }
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#c9a96a] text-[#17130c] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-35"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#173b50] text-white transition hover:bg-[#0d9488] disabled:cursor-not-allowed disabled:opacity-35"
                 aria-label="ارسال پیام"
               >
                 {sending ? (
-                  <span className="h-5 w-5 animate-spin rounded-full border-2 border-black/20 border-t-black" />
+                  <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/25 border-t-white" />
                 ) : (
                   <SupportIcon name="send" size={19} />
                 )}
@@ -691,12 +684,11 @@ export default function SupportPage() {
             </div>
 
             <div className="mt-2 flex items-center justify-between px-1">
-              <p className="text-[10px] leading-5 text-white/30">
-                برای رفتن به خط بعدی، Shift + Enter را بزن.
+              <p className="text-[10px] leading-5 text-[#91a0a5]">
               </p>
               <span
                 className={`text-[10px] tabular-nums ${
-                  text.length > 1900 ? 'text-[#c9a96a]' : 'text-white/25'
+                  text.length > 1900 ? 'text-[#0d9488]' : 'text-[#91a0a5]'
                 }`}
               >
                 {text.length}/۲۰۰۰
@@ -704,8 +696,10 @@ export default function SupportPage() {
             </div>
           </form>
 
-          <div className="mt-3 flex items-center justify-center gap-1.5 pb-1 text-[10px] text-white/25">
-            <SupportIcon name="shield" size={13} />
+          <div className="mt-3 flex items-center justify-center gap-1.5 pb-1 text-[10px] text-[#91a0a5]">
+            <span className="text-[#0d9488]">
+              <SupportIcon name="shield" size={13} />
+            </span>
             <span>گفت‌وگوی خصوصی با مدیریت</span>
           </div>
         </footer>
@@ -713,4 +707,3 @@ export default function SupportPage() {
     </main>
   )
 }
-

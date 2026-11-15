@@ -18,7 +18,7 @@ function LockIcon({ size = 28 }: { size?: number }) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.6"
+      strokeWidth="1.7"
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
@@ -38,7 +38,7 @@ function AlertIcon() {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.7"
+      strokeWidth="1.8"
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
@@ -87,78 +87,79 @@ export default async function BlockedPage() {
   return (
     <main
       dir="rtl"
-      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#050505] px-4 py-10 text-[#f5f0e7] sm:px-6"
+      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#f3f7f8] px-4 py-10 text-[#173b50] sm:px-6"
     >
-      {/* نورهای پس‌زمینه هماهنگ با پنل مدیریت */}
-      <div className="pointer-events-none absolute -top-36 right-[-100px] h-[360px] w-[360px] rounded-full bg-[#c9a96a]/[0.10] blur-[120px]" />
-      <div className="pointer-events-none absolute bottom-[-160px] left-[-100px] h-[360px] w-[360px] rounded-full bg-red-500/[0.045] blur-[120px]" />
+      {/* Background decoration */}
+      <div className="pointer-events-none absolute -right-28 -top-32 h-80 w-80 rounded-full bg-[#0d9488]/[0.07] blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-36 -left-24 h-96 w-96 rounded-full bg-[#173b50]/[0.05] blur-3xl" />
 
-      <section className="relative w-full max-w-lg overflow-hidden rounded-[30px] border border-white/[0.09] bg-[#10100f]/95 shadow-2xl shadow-black/40">
-        {/* نوار بالایی */}
-        <div className="h-1 w-full bg-gradient-to-l from-transparent via-[#c9a96a] to-transparent" />
+      <section className="relative w-full max-w-lg overflow-hidden rounded-[28px] border border-[#e2ebed] bg-white shadow-[0_18px_60px_rgba(23,59,80,0.09)]">
+        {/* Top accent */}
+        <div className="h-1.5 w-full bg-gradient-to-l from-[#0d9488] via-[#173b50] to-[#0d9488]" />
 
         <div className="px-5 py-9 sm:px-9 sm:py-11">
-          {/* آیکون و وضعیت */}
+          {/* Status */}
           <div className="flex flex-col items-center text-center">
-            <div className="mb-6 flex h-[86px] w-[86px] items-center justify-center rounded-[27px] border border-red-300/20 bg-red-400/[0.055] text-red-300 shadow-lg shadow-red-950/10">
+            <div className="mb-5 flex h-[82px] w-[82px] items-center justify-center rounded-[26px] border border-red-100 bg-red-50 text-red-500">
               <LockIcon size={35} />
             </div>
 
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-red-300/20 bg-red-400/[0.055] px-3.5 py-2 text-xs font-medium text-red-300">
-              <span className="h-1.5 w-1.5 rounded-full bg-red-300" />
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-red-100 bg-red-50 px-4 py-2 text-xs font-bold text-red-600">
+              <span className="h-2 w-2 rounded-full bg-red-500" />
               وضعیت حساب: مسدود
             </div>
 
-            <h1 className="text-2xl font-extrabold leading-relaxed tracking-tight text-[#f5f0e7] sm:text-[28px]">
+            <h1 className="text-xl font-extrabold leading-relaxed tracking-tight text-[#173b50] sm:text-2xl">
               دسترسی شما مسدود شده است
             </h1>
 
-            <p className="mt-3 max-w-sm text-sm leading-7 text-[#a9a297]">
+            <p className="mt-3 max-w-sm text-sm leading-7 text-[#71838b]">
               در حال حاضر امکان دسترسی به بخش‌های دانش‌آموزی برای حساب شما وجود ندارد.
             </p>
           </div>
 
-          {/* دلیل انسداد */}
-          <div className="mt-8 rounded-[22px] border border-[#c9a96a]/20 bg-[#c9a96a]/[0.035] p-4 sm:p-5">
-            <div className="mb-3 flex items-center gap-2.5">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#c9a96a]/20 bg-[#c9a96a]/[0.07] text-[#d6b77d]">
+          {/* Block reason */}
+          <div className="mt-8 rounded-[22px] border border-[#dcece9] bg-[#f5fbfa] p-4 sm:p-5">
+            <div className="mb-3 flex items-center gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#cce7e2] bg-white text-[#0d9488]">
                 <AlertIcon />
               </span>
 
               <div>
-                <h2 className="text-sm font-bold text-[#e9d5ad]">
+                <h2 className="text-sm font-extrabold text-[#173b50]">
                   دلیل انسداد حساب
                 </h2>
-                <p className="mt-1 text-[11px] text-[#898174]">
+                <p className="mt-1 text-[11px] text-[#84969c]">
                   توضیحات ثبت‌شده توسط مدیریت
                 </p>
               </div>
             </div>
 
-            <div className="rounded-xl border border-white/[0.055] bg-black/20 px-4 py-3.5">
-              <p className="break-words text-sm leading-8 text-[#e2dbcf]">
+            <div className="rounded-xl border border-[#e4eeee] bg-white px-4 py-3.5">
+              <p className="break-words text-sm leading-8 text-[#526b75]">
                 {reason}
               </p>
             </div>
           </div>
 
-          {/* راهنما */}
-          <div className="mt-6 flex items-start gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
-            <span className="mt-0.5 shrink-0 text-[#c9a96a]">
+          {/* Guidance */}
+          <div className="mt-5 flex items-start gap-3 rounded-2xl border border-[#e7edef] bg-[#f8fafb] p-4">
+            <span className="mt-0.5 shrink-0 text-[#0d9488]">
               <AlertIcon />
             </span>
-            <p className="text-xs leading-7 text-[#a9a297]">
+
+            <p className="text-xs leading-7 text-[#71838b]">
               اگر درباره این محدودیت پرسشی دارید یا فکر می‌کنید اشتباهی رخ داده است، برای پیگیری موضوع با مدیریت برنامه هماهنگ کنید.
             </p>
           </div>
 
-          {/* پابرگ */}
-          <div className="mt-8 flex items-center justify-center gap-2 text-xs text-[#777166]">
-            <span className="text-[#c9a96a]">✦</span>
-            <span>تکلیف من</span>
-            <span className="mx-1 text-white/15">|</span>
+          {/* Footer */}
+          <div className="mt-8 flex items-center justify-center gap-2 text-xs text-[#91a0a5]">
+            <span className="text-[#0d9488]">✦</span>
+            <span className="font-bold text-[#173b50]">تکلیف من</span>
+            <span className="mx-1 text-[#d8e1e3]">|</span>
             <span>مدیریت دسترسی</span>
-            <span className="text-[#c9a96a]">✦</span>
+            <span className="text-[#0d9488]">✦</span>
           </div>
         </div>
       </section>

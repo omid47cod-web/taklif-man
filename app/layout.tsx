@@ -1,3 +1,4 @@
+
 import type { Metadata, Viewport } from 'next'
 import { Vazirmatn } from 'next/font/google'
 import './globals.css'
@@ -18,6 +19,17 @@ export const metadata: Metadata = {
     'دسترسی سریع به تکالیف، درخواست تکالیف و ارتباط با مدیریت کلاس',
   applicationName: 'تکلیف من',
   manifest: '/manifest.webmanifest',
+
+  icons: {
+    icon: [
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+    ],
+  },
+
   appleWebApp: {
     capable: true,
     title: 'تکلیف من',

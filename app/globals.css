@@ -3203,3 +3203,28 @@ button {
     flex: 1;
   }
 }
+.input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.input-wrapper .input-icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.input-wrapper input {
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 50px !important;
+  position: relative;
+}

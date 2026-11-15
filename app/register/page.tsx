@@ -1,3 +1,4 @@
+
 'use client'
 
 import { type FormEvent, useState } from 'react'
@@ -31,12 +32,14 @@ function RegisterIcon({
           <path d="M5 21a7 7 0 0 1 14 0" />
         </svg>
       )
+
     case 'phone':
       return (
         <svg {...common}>
           <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.2 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.96.35 1.9.68 2.8a2 2 0 0 1-.45 2.11L8.07 9.93a16 16 0 0 0 6 6l1.3-1.27a2 2 0 0 1 2.11-.45c.9.33 1.84.56 2.8.68A2 2 0 0 1 22 16.92z" />
         </svg>
       )
+
     case 'shield':
       return (
         <svg {...common}>
@@ -44,12 +47,14 @@ function RegisterIcon({
           <path d="m9 12 2 2 4-4" />
         </svg>
       )
+
     case 'arrow':
       return (
         <svg {...common}>
           <path d="M19 12H5m7-7-7 7 7 7" />
         </svg>
       )
+
     case 'alert':
       return (
         <svg {...common}>
@@ -57,6 +62,7 @@ function RegisterIcon({
           <path d="M10.3 3.9 2.5 17.4A2 2 0 0 0 4.2 20h15.6a2 2 0 0 0 1.7-2.6L13.7 3.9a2 2 0 0 0-3.4 0z" />
         </svg>
       )
+
     case 'check':
       return (
         <svg {...common}>
@@ -107,7 +113,7 @@ export default function RegisterPage() {
     const name = fullName.trim()
     const mobile = phone.trim()
 
-    if (name.length < 3) {
+    if (name.length < 7) {
       setError('لطفاً نام و نام خانوادگی را کامل وارد کنید.')
       return
     }
@@ -180,58 +186,52 @@ export default function RegisterPage() {
   }
 
   return (
-    <main
-      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#050505] px-4 py-8 text-[#f5f0e7] sm:px-6"
-      dir="rtl"
-    >
-      <div className="pointer-events-none absolute -top-40 right-[-100px] h-[400px] w-[400px] rounded-full bg-[#c9a96a]/[0.10] blur-[120px]" />
-      <div className="pointer-events-none absolute bottom-[-180px] left-[-100px] h-[380px] w-[380px] rounded-full bg-[#c9a96a]/[0.06] blur-[120px]" />
+    <main className="register-page" dir="rtl">
+      <div className="background-decoration decoration-one" />
+      <div className="background-decoration decoration-two" />
 
-      <div className="relative w-full max-w-md">
-        <header className="mb-7 flex items-center justify-center gap-3">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-[#c9a96a]/35 bg-[#c9a96a]/[0.09] text-lg font-bold tracking-wider text-[#d9bd87] shadow-lg shadow-[#c9a96a]/[0.04]">
-            TM
+      <div className="register-container">
+        <header className="brand-header">
+          <div className="brand-logo">
+            <span>TM</span>
+            <span className="logo-dot" />
           </div>
 
-          <div>
-            <p className="text-xs text-[#a9a297]">
-              سامانه تکالیف کلاس
-            </p>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight">
-              تکلیف من
-            </h1>
+          <div className="brand-text">
+            <span>سامانه تکالیف کلاس</span>
+            <h1>تکلیف من</h1>
           </div>
         </header>
 
-        <section className="rounded-[28px] border border-white/[0.09] bg-[#10100f]/95 p-5 shadow-2xl shadow-black/40 sm:p-8">
-          <div className="mb-7">
-            <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#c9a96a]/25 bg-[#c9a96a]/[0.07] px-3 py-1.5 text-xs text-[#d9bd87]">
-              <RegisterIcon name="check" size={14} />
+        <section className="register-card">
+          <div className="card-heading">
+            <div className="welcome-badge">
+              <span className="welcome-icon">
+                <RegisterIcon name="check" size={14} />
+              </span>
               خوش آمدید
-            </span>
+            </div>
 
-            <h2 className="text-2xl font-bold leading-relaxed sm:text-[27px]">
+            <h2>
               قبل از شروع،
               <br />
               خودت را معرفی کن.
             </h2>
 
-            <p className="mt-3 text-sm leading-7 text-[#a9a297]">
-              اطلاعاتت برای شناسایی اعضای کلاس و دسترسی به تکالیف ثبت می‌شود.
+            <p>
+              اطلاعاتت را وارد کن تا بتوانی به تکالیف و امکانات کلاس دسترسی
+              داشته باشی.
             </p>
           </div>
 
-          <form className="space-y-5" onSubmit={handleSubmit}>
-            <div>
-              <label
-                htmlFor="fullName"
-                className="mb-2 block text-sm font-medium text-[#e5ddcf]"
-              >
+          <form className="register-form" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="fullName">
                 نام و نام خانوادگی
               </label>
 
-              <div className="flex min-h-14 items-center gap-3 rounded-2xl border border-white/10 bg-[#080808] px-4 transition focus-within:border-[#c9a96a]/50 focus-within:ring-2 focus-within:ring-[#c9a96a]/10">
-                <span className="shrink-0 text-[#c9a96a]">
+              <div className="input-wrapper">
+                <span className="input-icon">
                   <RegisterIcon name="user" size={20} />
                 </span>
 
@@ -240,27 +240,29 @@ export default function RegisterPage() {
                   type="text"
                   value={fullName}
                   onChange={(event) => setFullName(event.target.value)}
-                  placeholder="نام و نام خانوادگی"
+                  placeholder="مثلاً امید اوقانی"
                   autoComplete="name"
                   autoFocus
                   required
                   maxLength={100}
                   disabled={loading}
-                  className="min-w-0 flex-1 bg-transparent py-3 text-sm text-[#f5f0e7] outline-none placeholder:text-[#716b61] disabled:opacity-60"
                 />
+
+                {fullName.trim().length >= 7 && (
+                  <span className="input-valid">
+                    <RegisterIcon name="check" size={17} />
+                  </span>
+                )}
               </div>
             </div>
 
-            <div>
-              <label
-                htmlFor="phone"
-                className="mb-2 block text-sm font-medium text-[#e5ddcf]"
-              >
+            <div className="form-group">
+              <label htmlFor="phone">
                 شماره تماس
               </label>
 
-              <div className="flex min-h-14 items-center gap-3 rounded-2xl border border-white/10 bg-[#080808] px-4 transition focus-within:border-[#c9a96a]/50 focus-within:ring-2 focus-within:ring-[#c9a96a]/10">
-                <span className="shrink-0 text-[#c9a96a]">
+              <div className="input-wrapper">
+                <span className="input-icon">
                   <RegisterIcon name="phone" size={19} />
                 </span>
 
@@ -272,7 +274,13 @@ export default function RegisterPage() {
                   value={phone}
                   onChange={(event) => {
                     const value = event.target.value
-                      .replace(/\D/g, '')
+                      .replace(/[۰-۹]/g, (digit) =>
+                        String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit))
+                      )
+                      .replace(/[٠-٩]/g, (digit) =>
+                        String('٠١٢٣٤٥٦٧٨٩'.indexOf(digit))
+                      )
+                      .replace(/[^0-9]/g, '')
                       .slice(0, 11)
 
                     setPhone(value)
@@ -282,23 +290,30 @@ export default function RegisterPage() {
                   dir="ltr"
                   required
                   disabled={loading}
-                  className="min-w-0 flex-1 bg-transparent py-3 text-left text-sm tracking-wider text-[#f5f0e7] outline-none placeholder:text-[#716b61] disabled:opacity-60"
                 />
+
+                {phone.length === 11 && /^09\d{9}$/.test(phone) && (
+                  <span className="input-valid">
+                    <RegisterIcon name="check" size={17} />
+                  </span>
+                )}
               </div>
 
-              <p className="mt-2 text-xs leading-6 text-[#898174]">
+              <div className="input-hint">
+                <span className="hint-dot" />
                 شماره باید با 09 شروع شود و دقیقاً 11 رقم باشد.
-              </p>
+              </div>
             </div>
 
             {error && (
               <div
                 role="alert"
-                className="flex items-start gap-3 rounded-2xl border border-red-400/20 bg-red-500/[0.07] p-4 text-sm leading-7 text-red-300"
+                className="error-message"
               >
-                <span className="mt-1 shrink-0">
-                  <RegisterIcon name="alert" size={18} />
+                <span className="error-icon">
+                  <RegisterIcon name="alert" size={19} />
                 </span>
+
                 <p>{error}</p>
               </div>
             )}
@@ -306,36 +321,491 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex min-h-14 w-full items-center justify-between gap-3 rounded-2xl border border-[#d9bd87]/40 bg-[#c9a96a] px-5 py-3 text-sm font-bold text-[#17120a] shadow-lg shadow-[#c9a96a]/[0.08] transition hover:bg-[#d7b979] disabled:cursor-not-allowed disabled:opacity-60"
+              className="submit-button"
             >
               <span>
                 {loading ? 'در حال ثبت اطلاعات...' : 'ورود به تکلیف من'}
               </span>
 
               {loading ? (
-                <span className="h-5 w-5 animate-spin rounded-full border-2 border-[#17120a]/25 border-t-[#17120a]" />
+                <span className="button-spinner" />
               ) : (
-                <RegisterIcon name="arrow" size={20} />
+                <span className="button-icon">
+                  <RegisterIcon name="arrow" size={19} />
+                </span>
               )}
             </button>
           </form>
 
-          <div className="mt-6 flex items-start gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.025] p-4">
-            <span className="mt-0.5 shrink-0 text-[#c9a96a]">
-              <RegisterIcon name="shield" size={19} />
-            </span>
+          <div className="security-note">
+            <div className="security-icon">
+              <RegisterIcon name="shield" size={20} />
+            </div>
 
-            <p className="text-xs leading-7 text-[#a9a297]">
-              اطلاعاتت برای شناسایی اعضای کلاس استفاده می‌شود. شماره تماس را
-              درست وارد کن تا دسترسی به حساب خودت برقرار شود.
-            </p>
+            <div>
+              <strong>اطلاعاتت محفوظ می‌ماند</strong>
+              <p>
+                اطلاعات واردشده برای شناسایی اعضای کلاس و دسترسی به حساب
+                دانش‌آموزی استفاده می‌شود.
+              </p>
+            </div>
           </div>
         </section>
 
-        <footer className="pt-7 text-center text-xs text-[#777166]">
-          طراحی شده توسط امید اوقانی
+        <footer className="register-footer">
+          <span className="footer-line" />
+          <span>طراحی شده توسط امید اوقانی</span>
+          <span className="footer-line" />
         </footer>
       </div>
+
+      <style jsx>{`
+        .register-page {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 100vh;
+          padding: 35px 18px;
+          overflow: hidden;
+          background: #f3f7f8;
+          color: #173b50;
+          font-family: inherit;
+        }
+
+        .background-decoration {
+          position: absolute;
+          width: 340px;
+          height: 340px;
+          border-radius: 50%;
+          pointer-events: none;
+          filter: blur(90px);
+        }
+
+        .decoration-one {
+          top: -180px;
+          right: -100px;
+          background: rgba(13, 148, 136, 0.12);
+        }
+
+        .decoration-two {
+          bottom: -190px;
+          left: -100px;
+          background: rgba(23, 59, 80, 0.08);
+        }
+
+        .register-container {
+          position: relative;
+          z-index: 1;
+          width: 100%;
+          max-width: 440px;
+          margin: auto;
+        }
+
+        .brand-header {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 13px;
+          margin-bottom: 25px;
+        }
+
+        .brand-logo {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 57px;
+          height: 57px;
+          flex-shrink: 0;
+          border: 1px solid #c9e5e0;
+          border-radius: 18px;
+          background: #e7f5f2;
+          color: #087f76;
+          font-size: 18px;
+          font-weight: 900;
+          letter-spacing: -1px;
+        }
+
+        .logo-dot {
+          position: absolute;
+          right: 8px;
+          bottom: 8px;
+          width: 7px;
+          height: 7px;
+          border: 2px solid #e7f5f2;
+          border-radius: 50%;
+          background: #0d9488;
+        }
+
+        .brand-text span {
+          display: block;
+          color: #7b9098;
+          font-size: 11px;
+        }
+
+        .brand-text h1 {
+          margin: 4px 0 0;
+          color: #173b50;
+          font-size: 24px;
+          font-weight: 900;
+          letter-spacing: -0.5px;
+        }
+
+        .register-card {
+          padding: 27px;
+          border: 1px solid #e1e9ec;
+          border-radius: 25px;
+          background: rgba(255, 255, 255, 0.96);
+          box-shadow: 0 12px 40px rgba(23, 59, 80, 0.07);
+        }
+
+        .card-heading {
+          margin-bottom: 25px;
+        }
+
+        .welcome-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          padding: 7px 11px;
+          margin-bottom: 16px;
+          border: 1px solid #d9eeea;
+          border-radius: 30px;
+          background: #f0f8f6;
+          color: #0d887e;
+          font-size: 11px;
+          font-weight: 800;
+        }
+
+        .welcome-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 19px;
+          height: 19px;
+          border-radius: 50%;
+          background: #d9efea;
+        }
+
+        .card-heading h2 {
+          margin: 0;
+          color: #173b50;
+          font-size: 25px;
+          line-height: 1.85;
+          font-weight: 900;
+          letter-spacing: -0.5px;
+        }
+
+        .card-heading p {
+          margin: 9px 0 0;
+          color: #758992;
+          font-size: 12px;
+          line-height: 2.1;
+        }
+
+        .register-form {
+          display: flex;
+          flex-direction: column;
+          gap: 19px;
+        }
+
+        .form-group label {
+          display: block;
+          margin-bottom: 9px;
+          color: #294c5e;
+          font-size: 12px;
+          font-weight: 800;
+        }
+
+        .input-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 11px;
+          min-height: 55px;
+          padding: 0 14px;
+          border: 1px solid #e0e9ec;
+          border-radius: 14px;
+          background: #f8fafb;
+          transition:
+            border-color 0.2s ease,
+            background 0.2s ease,
+            box-shadow 0.2s ease;
+        }
+
+        .input-wrapper:focus-within {
+          border-color: #70bdb3;
+          background: #ffffff;
+          box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.09);
+        }
+
+        .input-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          color: #0d9488;
+        }
+
+        .input-wrapper input {
+          width: 100%;
+          min-width: 0;
+          padding: 14px 0;
+          border: 0;
+          outline: 0;
+          background: transparent;
+          color: #173b50;
+          font-family: inherit;
+          font-size: 13px;
+          font-weight: 600;
+        }
+
+        .input-wrapper input::placeholder {
+          color: #a2b0b5;
+          font-size: 12px;
+          font-weight: 400;
+        }
+
+        .input-wrapper input:disabled {
+          opacity: 0.6;
+        }
+
+        .input-wrapper input:-webkit-autofill,
+        .input-wrapper input:-webkit-autofill:hover,
+        .input-wrapper input:-webkit-autofill:focus {
+          -webkit-text-fill-color: #173b50;
+          box-shadow: 0 0 0 1000px #f8fafb inset;
+          transition: background-color 9999s ease-in-out 0s;
+        }
+
+        .input-valid {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          color: #0d9488;
+        }
+
+        .input-hint {
+          display: flex;
+          align-items: center;
+          gap: 7px;
+          margin-top: 8px;
+          color: #8a9ba1;
+          font-size: 10px;
+          line-height: 1.8;
+        }
+
+        .hint-dot {
+          width: 5px;
+          height: 5px;
+          flex-shrink: 0;
+          border-radius: 50%;
+          background: #0d9488;
+        }
+
+        .error-message {
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+          padding: 12px;
+          border: 1px solid #f0d8d2;
+          border-radius: 13px;
+          background: #fff5f2;
+          color: #a95543;
+        }
+
+        .error-icon {
+          display: flex;
+          align-items: center;
+          flex-shrink: 0;
+          margin-top: 2px;
+          color: #bd705c;
+        }
+
+        .error-message p {
+          margin: 0;
+          font-size: 11px;
+          line-height: 2;
+          overflow-wrap: anywhere;
+        }
+
+        .submit-button {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          width: 100%;
+          min-height: 55px;
+          padding: 10px 16px;
+          margin-top: 2px;
+          border: 1px solid #087f76;
+          border-radius: 14px;
+          background: #0d9488;
+          color: #ffffff;
+          cursor: pointer;
+          font-family: inherit;
+          font-size: 13px;
+          font-weight: 850;
+          box-shadow: 0 5px 14px rgba(13, 148, 136, 0.16);
+          transition:
+            background 0.2s ease,
+            box-shadow 0.2s ease,
+            transform 0.2s ease;
+        }
+
+        .submit-button:hover:not(:disabled) {
+          background: #0b8178;
+          box-shadow: 0 7px 18px rgba(13, 148, 136, 0.2);
+          transform: translateY(-1px);
+        }
+
+        .submit-button:active:not(:disabled) {
+          transform: scale(0.99);
+        }
+
+        .submit-button:disabled {
+          cursor: not-allowed;
+          opacity: 0.65;
+        }
+
+        .button-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 33px;
+          height: 33px;
+          border: 1px solid rgba(255, 255, 255, 0.22);
+          border-radius: 10px;
+          background: rgba(255, 255, 255, 0.12);
+        }
+
+        .button-spinner {
+          width: 21px;
+          height: 21px;
+          flex-shrink: 0;
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          border-top-color: #ffffff;
+          border-radius: 50%;
+          animation: spin 0.8s linear infinite;
+        }
+
+        .security-note {
+          display: flex;
+          align-items: flex-start;
+          gap: 11px;
+          padding: 13px;
+          margin-top: 22px;
+          border: 1px solid #e4edee;
+          border-radius: 14px;
+          background: #f7fafb;
+        }
+
+        .security-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 35px;
+          height: 35px;
+          flex-shrink: 0;
+          border-radius: 11px;
+          background: #e8f4f2;
+          color: #0d9488;
+        }
+
+        .security-note strong {
+          display: block;
+          margin-bottom: 4px;
+          color: #315365;
+          font-size: 11px;
+          font-weight: 850;
+        }
+
+        .security-note p {
+          margin: 0;
+          color: #82939a;
+          font-size: 10px;
+          line-height: 2;
+        }
+
+        .register-footer {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          padding-top: 25px;
+          color: #8a9ba1;
+          font-size: 10px;
+          font-weight: 650;
+        }
+
+        .footer-line {
+          width: 19px;
+          height: 1px;
+          background: #cbdcde;
+        }
+
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        @media (max-width: 480px) {
+          .register-page {
+            padding: 22px 14px;
+          }
+
+          .register-container {
+            max-width: 430px;
+          }
+
+          .brand-header {
+            margin-bottom: 20px;
+          }
+
+          .brand-logo {
+            width: 51px;
+            height: 51px;
+            border-radius: 16px;
+          }
+
+          .brand-text h1 {
+            font-size: 22px;
+          }
+
+          .register-card {
+            padding: 21px 17px;
+            border-radius: 21px;
+          }
+
+          .card-heading {
+            margin-bottom: 22px;
+          }
+
+          .card-heading h2 {
+            font-size: 23px;
+          }
+
+          .register-form {
+            gap: 17px;
+          }
+
+          .security-note {
+            margin-top: 19px;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          *,
+          *::before,
+          *::after {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+          }
+        }
+      `}</style>
     </main>
   )
 }

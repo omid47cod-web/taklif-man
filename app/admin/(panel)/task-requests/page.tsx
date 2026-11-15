@@ -45,6 +45,11 @@ type TaskRequest = {
   replies: Reply[]
 }
 
+type ReplyDeleteTarget = {
+  requestId: string
+  replyId: string
+}
+
 function getErrorMessage(err: unknown): string {
   if (err instanceof Error && err.message) {
     return err.message
@@ -58,11 +63,10 @@ function getErrorMessage(err: unknown): string {
       value.details,
       value.hint,
       value.code,
-    ]
-      .filter(
-        (part): part is string =>
-          typeof part === 'string' && part.length > 0
-      )
+    ].filter(
+      (part): part is string =>
+        typeof part === 'string' && part.length > 0
+    )
 
     if (parts.length > 0) {
       return parts.join(' | ')
@@ -88,15 +92,21 @@ export default function AdminTaskRequestsPage() {
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [deletingReplyId, setDeletingReplyId] = useState<string | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
+  const [replyDeleteTarget, setReplyDeleteTarget] =
+    useState<ReplyDeleteTarget | null>(null)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
 
   const selected =
     requests.find((item) => item.id === selectedId) ?? null
 
-  const loadRequests = useCallback(async () => {
-    setLoading(true)
+  const loadRequests = useCallback(async (silent = false) => {
+    if (!silent) {
+      setLoading(true)
+    }
+
     setError('')
 
     try {
@@ -113,58 +123,56 @@ export default function AdminTaskRequestsPage() {
       if (requestError) throw requestError
 
       const rows = requestData ?? []
+
+      if (rows.length === 0) {
+        setRequests([])
+        setSelectedId(null)
+        return
+      }
+
       const studentIds = [
         ...new Set(rows.map((row) => row.student_id)),
       ]
+
       const requestIds = rows.map((row) => row.id)
 
-      const studentsById: Record<string, Student> = {}
-      const repliesByRequest: Record<string, Reply[]> = {}
-      const attachmentsByReply: Record<string, Attachment[]> = {}
-
-      if (studentIds.length > 0) {
-        const {
-          data,
-          error: studentsError,
-        } = await supabase
+      const [studentsResult, repliesResult] = await Promise.all([
+        supabase
           .from('students')
           .select('id, full_name, phone')
-          .in('id', studentIds)
+          .in('id', studentIds),
 
-        if (studentsError) throw studentsError
-
-        for (const student of data ?? []) {
-          studentsById[student.id] = student
-        }
-      }
-
-      let replyRows: Reply[] = []
-
-      if (requestIds.length > 0) {
-        const {
-          data,
-          error: repliesError,
-        } = await supabase
+        supabase
           .from('task_request_replies')
           .select(
             'id, request_id, admin_id, message, created_at'
           )
           .in('request_id', requestIds)
-          .order('created_at', { ascending: true })
+          .order('created_at', { ascending: true }),
+      ])
 
-        if (repliesError) throw repliesError
+      if (studentsResult.error) throw studentsResult.error
+      if (repliesResult.error) throw repliesResult.error
 
-        replyRows = (data ?? []).map((reply) => ({
-          ...reply,
-          attachments: [],
-        })) as Reply[]
+      const studentsById: Record<string, Student> = {}
+
+      for (const student of studentsResult.data ?? []) {
+        studentsById[student.id] = student
       }
 
+      const replyRows: Reply[] = (
+        repliesResult.data ?? []
+      ).map((reply) => ({
+        ...reply,
+        attachments: [],
+      })) as Reply[]
+
       const replyIds = replyRows.map((reply) => reply.id)
+      const attachmentsByReply: Record<string, Attachment[]> = {}
 
       if (replyIds.length > 0) {
         const {
-          data,
+          data: attachmentData,
           error: attachmentsError,
         } = await supabase
           .from('task_request_attachments')
@@ -175,7 +183,9 @@ export default function AdminTaskRequestsPage() {
 
         if (attachmentsError) throw attachmentsError
 
-        for (const attachment of (data ?? []) as Attachment[]) {
+        for (const attachment of (
+          attachmentData ?? []
+        ) as Attachment[]) {
           attachmentsByReply[attachment.reply_id] ??= []
 
           attachmentsByReply[attachment.reply_id].push({
@@ -186,6 +196,8 @@ export default function AdminTaskRequestsPage() {
           })
         }
       }
+
+      const repliesByRequest: Record<string, Reply[]> = {}
 
       for (const reply of replyRows) {
         repliesByRequest[reply.request_id] ??= []
@@ -204,12 +216,16 @@ export default function AdminTaskRequestsPage() {
 
       setRequests(result)
 
-      if (
-        selectedId &&
-        !result.some((item) => item.id === selectedId)
-      ) {
-        setSelectedId(null)
-      }
+      setSelectedId((currentId) => {
+        if (
+          currentId &&
+          !result.some((item) => item.id === currentId)
+        ) {
+          return null
+        }
+
+        return currentId
+      })
     } catch (err: unknown) {
       console.error('LOAD TASK REQUESTS ERROR:', err)
 
@@ -217,9 +233,11 @@ export default function AdminTaskRequestsPage() {
         `دریافت درخواست‌ها ناموفق بود: ${getErrorMessage(err)}`
       )
     } finally {
-      setLoading(false)
+      if (!silent) {
+        setLoading(false)
+      }
     }
-  }, [supabase, selectedId])
+  }, [supabase])
 
   useEffect(() => {
     void loadRequests()
@@ -261,21 +279,23 @@ export default function AdminTaskRequestsPage() {
   ) {
     event.preventDefault()
 
-    if (!selected) return
+    if (!selected || sending) return
 
+    const requestId = selected.id
     const text = message.trim()
+    const selectedFiles = [...files]
 
-    if (!text && files.length === 0) {
+    if (!text && selectedFiles.length === 0) {
       setError('متن پاسخ یا دست‌کم یک تصویر انتخاب کن.')
       return
     }
 
-    if (files.some((file) => !file.type.startsWith('image/'))) {
+    if (selectedFiles.some((file) => !file.type.startsWith('image/'))) {
       setError('فقط فایل تصویری انتخاب کن.')
       return
     }
 
-    if (files.some((file) => file.size > 10 * 1024 * 1024)) {
+    if (selectedFiles.some((file) => file.size > 10 * 1024 * 1024)) {
       setError('حجم هر تصویر باید حداکثر ۱۰ مگابایت باشد.')
       return
     }
@@ -294,9 +314,7 @@ export default function AdminTaskRequestsPage() {
       } = await supabase.auth.getUser()
 
       if (authError || !authData.user) {
-        throw new Error(
-          'نشست مدیر معتبر نیست. دوباره وارد پنل شو.'
-        )
+        throw new Error('نشست مدیر معتبر نیست. دوباره وارد پنل شو.')
       }
 
       const {
@@ -305,33 +323,27 @@ export default function AdminTaskRequestsPage() {
       } = await supabase
         .from('task_request_replies')
         .insert({
-          request_id: selected.id,
+          request_id: requestId,
           admin_id: authData.user.id,
           message: text,
         })
-        .select('id')
+        .select('id, request_id, admin_id, message, created_at')
         .single()
 
       if (replyError) throw replyError
 
       replyId = reply.id
 
-      const attachmentRows: {
-        reply_id: string
-        storage_path: string
-        original_name: string
-        mime_type: string
-        size_bytes: number
-      }[] = []
+      const attachmentRows: Attachment[] = []
 
-      for (const file of files) {
+      for (const file of selectedFiles) {
         const safeName = file.name.replace(
           /[^a-zA-Z0-9._-]/g,
           '_'
         )
 
         const path =
-          `${selected.id}/${reply.id}/` +
+          `${requestId}/${reply.id}/` +
           `${crypto.randomUUID()}-${safeName}`
 
         const { error: uploadError } = await supabase.storage
@@ -346,20 +358,45 @@ export default function AdminTaskRequestsPage() {
         uploadedPaths.push(path)
 
         attachmentRows.push({
+          id: '',
           reply_id: reply.id,
           storage_path: path,
           original_name: file.name,
           mime_type: file.type,
           size_bytes: file.size,
+          url: '',
         })
       }
 
       if (attachmentRows.length > 0) {
-        const { error: attachmentError } = await supabase
+        const {
+          data: savedAttachments,
+          error: attachmentError,
+        } = await supabase
           .from('task_request_attachments')
-          .insert(attachmentRows)
+          .insert(
+            attachmentRows.map((item) => ({
+              reply_id: item.reply_id,
+              storage_path: item.storage_path,
+              original_name: item.original_name,
+              mime_type: item.mime_type,
+              size_bytes: item.size_bytes,
+            }))
+          )
+          .select(
+            'id, reply_id, storage_path, original_name, mime_type, size_bytes'
+          )
 
         if (attachmentError) throw attachmentError
+
+        attachmentRows.splice(
+          0,
+          attachmentRows.length,
+          ...(savedAttachments ?? []).map((item) => ({
+            ...item,
+            url: `/api/task-requests/attachments/${encodeURIComponent(item.id)}`,
+          }))
+        )
       }
 
       const { error: requestUpdateError } = await supabase
@@ -368,15 +405,37 @@ export default function AdminTaskRequestsPage() {
           student_read_at: null,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', selected.id)
+        .eq('id', requestId)
 
       if (requestUpdateError) throw requestUpdateError
+
+      const newReply: Reply = {
+        ...reply,
+        attachments: attachmentRows,
+      }
+
+      setRequests((current) =>
+        current.map((item) =>
+          item.id === requestId
+            ? {
+                ...item,
+                student_read_at: null,
+                updated_at: newReply.created_at,
+                replies: [...item.replies, newReply],
+              }
+            : item
+        )
+      )
 
       setMessage('')
       setFiles([])
       setNotice('پاسخ با موفقیت ثبت شد.')
 
-      await loadRequests()
+      const fileInput = document.getElementById(
+        'reply-images'
+      ) as HTMLInputElement | null
+
+      if (fileInput) fileInput.value = ''
     } catch (err: unknown) {
       console.error('SEND TASK REPLY ERROR:', err)
 
@@ -419,6 +478,112 @@ export default function AdminTaskRequestsPage() {
     }
   }
 
+  // حذف مستقل یک پاسخ به همراه پیوست‌های همان پاسخ
+  async function deleteReply() {
+    if (!replyDeleteTarget || deletingReplyId) return
+
+    const { requestId, replyId } = replyDeleteTarget
+
+    const targetRequest = requests.find(
+      (item) => item.id === requestId
+    )
+
+    const targetReply = targetRequest?.replies.find(
+      (reply) => reply.id === replyId
+    )
+
+    if (!targetRequest || !targetReply) {
+      setError('پاسخ موردنظر در فهرست پیدا نشد.')
+      setReplyDeleteTarget(null)
+      return
+    }
+
+    setDeletingReplyId(replyId)
+    setError('')
+    setNotice('')
+
+    try {
+      const paths = targetReply.attachments.map(
+        (attachment) => attachment.storage_path
+      )
+
+      // مرحله اول: حذف فایل‌های مربوط به همین پاسخ از Storage
+      if (paths.length > 0) {
+        const { error: storageError } = await supabase.storage
+          .from(BUCKET)
+          .remove(paths)
+
+        if (storageError) {
+          throw new Error(
+            `حذف تصاویر پاسخ ناموفق بود: ${getErrorMessage(storageError)}`
+          )
+        }
+      }
+
+      // مرحله دوم: حذف اطلاعات پیوست‌های همین پاسخ
+      const {
+        error: attachmentError,
+      } = await supabase
+        .from('task_request_attachments')
+        .delete()
+        .eq('reply_id', replyId)
+
+      if (attachmentError) {
+        throw new Error(
+          `حذف اطلاعات تصاویر ناموفق بود: ${getErrorMessage(attachmentError)}`
+        )
+      }
+
+      // مرحله سوم: حذف خود پاسخ
+      const {
+        data: deletedReplies,
+        error: replyError,
+      } = await supabase
+        .from('task_request_replies')
+        .delete()
+        .eq('id', replyId)
+        .eq('request_id', requestId)
+        .select('id')
+
+      if (replyError) {
+        throw new Error(
+          `حذف پاسخ ناموفق بود: ${getErrorMessage(replyError)}`
+        )
+      }
+
+      if (!deletedReplies || deletedReplies.length === 0) {
+        throw new Error(
+          'پاسخ حذف نشد. مجوز حذف در دیتابیس (RLS) را بررسی کن.'
+        )
+      }
+
+      // به‌روزرسانی رابط کاربری فقط پس از تأیید حذف از دیتابیس
+      setRequests((current) =>
+        current.map((item) =>
+          item.id === requestId
+            ? {
+                ...item,
+                replies: item.replies.filter(
+                  (reply) => reply.id !== replyId
+                ),
+              }
+            : item
+        )
+      )
+
+      setReplyDeleteTarget(null)
+      setNotice('پاسخ و تصاویر مربوط به آن با موفقیت حذف شدند.')
+    } catch (err: unknown) {
+      console.error('DELETE TASK REPLY ERROR:', err)
+
+      setError(
+        `حذف پاسخ کامل نشد: ${getErrorMessage(err)}`
+      )
+    } finally {
+      setDeletingReplyId(null)
+    }
+  }
+
   async function deleteRequest() {
     if (!deleteTarget || deleting) return
 
@@ -437,8 +602,6 @@ export default function AdminTaskRequestsPage() {
     setNotice('')
 
     try {
-      console.log('DELETE STEP 1: started', target.id)
-
       const replyIds = target.replies.map((reply) => reply.id)
 
       const paths = target.replies.flatMap((reply) =>
@@ -447,34 +610,18 @@ export default function AdminTaskRequestsPage() {
         )
       )
 
-      console.log('DELETE DEBUG:', {
-        requestId: target.id,
-        replyIds,
-        attachmentPaths: paths,
-      })
-
-      // ابتدا فایل‌های Storage حذف می‌شوند.
       if (paths.length > 0) {
-        console.log('DELETE STEP 2: removing storage files', paths)
-
-        const {
-          error: storageError,
-        } = await supabase.storage
+        const { error: storageError } = await supabase.storage
           .from(BUCKET)
           .remove(paths)
 
         if (storageError) {
-          console.error('STORAGE DELETE ERROR:', storageError)
-
           throw new Error(
             `حذف فایل‌ها ناموفق بود: ${getErrorMessage(storageError)}`
           )
         }
-
-        console.log('DELETE STEP 2: storage completed')
       }
 
-      // سپس رکوردهای پیوست حذف می‌شوند.
       if (replyIds.length > 0) {
         const {
           error: attachmentError,
@@ -484,19 +631,11 @@ export default function AdminTaskRequestsPage() {
           .in('reply_id', replyIds)
 
         if (attachmentError) {
-          console.error(
-            'ATTACHMENT DELETE ERROR:',
-            attachmentError
-          )
-
           throw new Error(
-            `حذف اطلاعات پیوست ناموفق بود: ${getErrorMessage(
-              attachmentError
-            )}`
+            `حذف اطلاعات پیوست ناموفق بود: ${getErrorMessage(attachmentError)}`
           )
         }
 
-        // حذف پاسخ‌ها
         const {
           error: replyError,
         } = await supabase
@@ -505,16 +644,11 @@ export default function AdminTaskRequestsPage() {
           .in('id', replyIds)
 
         if (replyError) {
-          console.error('REPLY DELETE ERROR:', replyError)
-
           throw new Error(
             `حذف پاسخ‌ها ناموفق بود: ${getErrorMessage(replyError)}`
           )
         }
       }
-
-      // در پایان درخواست اصلی حذف می‌شود.
-      console.log('DELETE STEP 4: deleting request', target.id)
 
       const {
         data: deletedRows,
@@ -526,14 +660,6 @@ export default function AdminTaskRequestsPage() {
         .select('id')
 
       if (requestError) {
-        console.error('REQUEST DELETE ERROR:', JSON.stringify(requestError, null, 2))
-console.error('REQUEST DELETE ERROR DETAILS:', {
-  message: requestError.message,
-  code: requestError.code,
-  details: requestError.details,
-  hint: requestError.hint,
-})
-
         throw new Error(
           `حذف درخواست ناموفق بود: ${getErrorMessage(requestError)}`
         )
@@ -555,8 +681,6 @@ console.error('REQUEST DELETE ERROR DETAILS:', {
 
       setDeleteTarget(null)
       setNotice('درخواست، پاسخ‌ها و پیوست‌های آن حذف شدند.')
-
-      console.log('DELETE COMPLETE:', target.id)
     } catch (err: unknown) {
       console.error('DELETE TASK REQUEST FAILED:', err)
 
@@ -599,7 +723,7 @@ console.error('REQUEST DELETE ERROR DETAILS:', {
 
           <div className="flex gap-2">
             <button
-              onClick={() => void loadRequests()}
+              onClick={() => void loadRequests(true)}
               disabled={loading}
               className="rounded-xl border border-white/10 px-4 py-2.5 text-sm text-white/70 hover:border-[#c9a96a]/40 disabled:opacity-50"
             >
@@ -825,9 +949,29 @@ console.error('REQUEST DELETE ERROR DETAILS:', {
                           </div>
                         )}
 
-                        <p className="mt-4 text-[11px] text-white/30">
-                          {formatDate(reply.created_at)}
-                        </p>
+                        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.06] pt-3">
+                          <p className="text-[11px] text-white/30">
+                            {formatDate(reply.created_at)}
+                          </p>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setError('')
+                              setNotice('')
+                              setReplyDeleteTarget({
+                                requestId: selected.id,
+                                replyId: reply.id,
+                              })
+                            }}
+                            disabled={deletingReplyId === reply.id}
+                            className="rounded-lg border border-red-500/20 px-3 py-1.5 text-xs text-red-300 transition hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            {deletingReplyId === reply.id
+                              ? 'در حال حذف...'
+                              : 'حذف پاسخ'}
+                          </button>
+                        </div>
                       </article>
                     ))
                   )}
@@ -905,6 +1049,7 @@ console.error('REQUEST DELETE ERROR DETAILS:', {
         </div>
       </div>
 
+      {/* تأیید حذف کامل درخواست */}
       {deleteTarget && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
@@ -946,6 +1091,65 @@ console.error('REQUEST DELETE ERROR DETAILS:', {
               <button
                 onClick={() => setDeleteTarget(null)}
                 disabled={deleting}
+                className="flex-1 rounded-xl border border-white/10 px-4 py-3 text-sm text-white/70 disabled:opacity-50"
+              >
+                انصراف
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* تأیید حذف مستقل پاسخ */}
+      {replyDeleteTarget && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4"
+          onMouseDown={(event) => {
+            if (
+              event.target === event.currentTarget &&
+              !deletingReplyId
+            ) {
+              setReplyDeleteTarget(null)
+            }
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-reply-dialog-title"
+            className="w-full max-w-md rounded-3xl border border-red-500/20 bg-[#111] p-6 shadow-2xl"
+          >
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-red-500/10 text-xl text-red-300">
+              🗑
+            </div>
+
+            <h2
+              id="delete-reply-dialog-title"
+              className="text-lg font-bold"
+            >
+              حذف این پاسخ؟
+            </h2>
+
+            <p className="mt-3 text-sm leading-7 text-white/55">
+              فقط همین پاسخ و تصاویر پیوست‌شده به آن حذف می‌شوند. متن درخواست دانش‌آموز و سایر پاسخ‌ها باقی می‌مانند. این عملیات قابل بازگشت نیست.
+            </p>
+
+            <div className="mt-6 flex gap-3">
+              <button
+                type="button"
+                onClick={() => void deleteReply()}
+                disabled={deletingReplyId !== null}
+                className="flex-1 rounded-xl bg-red-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {deletingReplyId
+                  ? 'در حال حذف...'
+                  : 'بله، حذف پاسخ'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setReplyDeleteTarget(null)}
+                disabled={deletingReplyId !== null}
                 className="flex-1 rounded-xl border border-white/10 px-4 py-3 text-sm text-white/70 disabled:opacity-50"
               >
                 انصراف

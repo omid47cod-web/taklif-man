@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import AdminActionLink from '@/components/admin/AdminActionLink'
+import GlobalAccessControl from '@/components/admin/GlobalAccessControl'
 
 function AdminIcon({ name }: { name: string }) {
   const common = {
@@ -226,7 +227,9 @@ export default async function AdminPage() {
               از اینجا می‌توانی تکالیف کلاس و دانش‌آموزان را مدیریت کنی.
             </p>
           </div>
-        </header>
+                </header>
+
+        <GlobalAccessControl />
 
         {/* Statistics */}
         <section className="mb-10">
